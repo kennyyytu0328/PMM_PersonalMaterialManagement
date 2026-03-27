@@ -1,5 +1,5 @@
 import { sqliteTable, text, integer, real } from 'drizzle-orm/sqlite-core'
-import { sql } from 'drizzle-orm'
+import { sql, relations } from 'drizzle-orm'
 
 export const users = sqliteTable('users', {
   id: integer('id').primaryKey({ autoIncrement: true }),
@@ -62,6 +62,39 @@ export const checkouts = sqliteTable('checkouts', {
   returnedAt: text('returned_at'),
   note: text('note'),
 })
+
+// Relations
+export const usersRelations = relations(users, ({ many }) => ({
+  transactions: many(transactions),
+  checkouts: many(checkouts),
+}))
+
+export const categoriesRelations = relations(categories, ({ many, one }) => ({
+  items: many(items),
+  parent: one(categories, { fields: [categories.parentId], references: [categories.id], relationName: 'parentCategory' }),
+  children: many(categories, { relationName: 'parentCategory' }),
+}))
+
+export const locationsRelations = relations(locations, ({ many }) => ({
+  items: many(items),
+}))
+
+export const itemsRelations = relations(items, ({ one, many }) => ({
+  category: one(categories, { fields: [items.categoryId], references: [categories.id] }),
+  location: one(locations, { fields: [items.locationId], references: [locations.id] }),
+  transactions: many(transactions),
+  checkouts: many(checkouts),
+}))
+
+export const transactionsRelations = relations(transactions, ({ one }) => ({
+  item: one(items, { fields: [transactions.itemId], references: [items.id] }),
+  performer: one(users, { fields: [transactions.performedBy], references: [users.id] }),
+}))
+
+export const checkoutsRelations = relations(checkouts, ({ one }) => ({
+  item: one(items, { fields: [checkouts.itemId], references: [items.id] }),
+  user: one(users, { fields: [checkouts.userId], references: [users.id] }),
+}))
 
 export type User = typeof users.$inferSelect
 export type NewUser = typeof users.$inferInsert
