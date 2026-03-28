@@ -1,7 +1,7 @@
 'use client'
 
 import { useSession, signOut } from 'next-auth/react'
-import { Search, User, LogOut, Settings } from 'lucide-react'
+import { Search, User, LogOut, Settings, KeyRound } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
 
@@ -34,6 +34,14 @@ export function Header() {
                     <p className="text-sm font-medium text-gray-900">{session?.user?.name}</p>
                     <p className="text-xs text-gray-500">{(session?.user as any)?.role}</p>
                   </div>
+                  <Link
+                    href="/profile"
+                    className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    <KeyRound size={16} />
+                    Change Password
+                  </Link>
                   {(session?.user as any)?.role === 'admin' && (
                     <Link
                       href="/admin/users"

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { Users, Plus, Trash2 } from 'lucide-react'
+import { Users, Plus, Trash2, Pencil } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Modal } from '@/components/ui/modal'
@@ -39,6 +39,7 @@ export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
   const [modalOpen, setModalOpen] = useState(false)
+  const [editingUser, setEditingUser] = useState<User | null>(null)
   const [form, setForm] = useState<FormState>(EMPTY_FORM)
   const [saving, setSaving] = useState(false)
 
@@ -59,12 +60,20 @@ export default function UsersPage() {
   }, [fetchUsers])
 
   const openAdd = () => {
+    setEditingUser(null)
     setForm(EMPTY_FORM)
+    setModalOpen(true)
+  }
+
+  const openEdit = (user: User) => {
+    setEditingUser(user)
+    setForm({ name: user.name, email: user.email, password: '', role: user.role })
     setModalOpen(true)
   }
 
   const closeModal = () => {
     setModalOpen(false)
+    setEditingUser(null)
     setForm(EMPTY_FORM)
   }
 
@@ -77,33 +86,45 @@ export default function UsersPage() {
       toast('Email is required', 'error')
       return
     }
-    if (!form.password) {
+    if (!editingUser && !form.password) {
       toast('Password is required', 'error')
+      return
+    }
+    if (form.password && form.password.length < 8) {
+      toast('Password must be at least 8 characters', 'error')
       return
     }
 
     setSaving(true)
     try {
-      const res = await fetch('/api/users', {
-        method: 'POST',
+      const isEdit = !!editingUser
+      const url = isEdit ? `/api/users/${editingUser.id}` : '/api/users'
+      const method = isEdit ? 'PUT' : 'POST'
+
+      const body: Record<string, string> = {
+        name: form.name.trim(),
+        email: form.email.trim(),
+        role: form.role,
+      }
+      if (form.password) {
+        body.password = form.password
+      }
+
+      const res = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: form.name.trim(),
-          email: form.email.trim(),
-          password: form.password,
-          role: form.role,
-        }),
+        body: JSON.stringify(body),
       })
       const json = await res.json()
       if (json.success) {
-        toast('User created', 'success')
+        toast(isEdit ? 'User updated' : 'User created', 'success')
         closeModal()
         await fetchUsers()
       } else {
-        toast(json.error ?? 'Failed to create user', 'error')
+        toast(json.error ?? `Failed to ${isEdit ? 'update' : 'create'} user`, 'error')
       }
     } catch {
-      toast('Failed to create user', 'error')
+      toast(`Failed to ${editingUser ? 'update' : 'create'} user`, 'error')
     } finally {
       setSaving(false)
     }
@@ -164,19 +185,27 @@ export default function UsersPage() {
                   <p className="mt-0.5 text-sm text-gray-500">{user.email}</p>
                   <p className="mt-1 text-xs text-gray-400">{formatDate(user.createdAt)}</p>
                 </div>
-                <button
-                  onClick={() => handleDelete(user)}
-                  className="shrink-0 rounded-lg p-2 text-gray-400 hover:bg-red-50 hover:text-red-600"
-                >
-                  <Trash2 size={16} />
-                </button>
+                <div className="flex shrink-0 gap-1">
+                  <button
+                    onClick={() => openEdit(user)}
+                    className="rounded-lg p-2 text-gray-400 hover:bg-blue-50 hover:text-blue-600"
+                  >
+                    <Pencil size={16} />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(user)}
+                    className="rounded-lg p-2 text-gray-400 hover:bg-red-50 hover:text-red-600"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
               </div>
             </div>
           ))}
         </div>
       )}
 
-      <Modal open={modalOpen} onClose={closeModal} title="Add User">
+      <Modal open={modalOpen} onClose={closeModal} title={editingUser ? 'Edit User' : 'Add User'}>
         <div className="space-y-4">
           <Input
             id="user-name"
@@ -195,9 +224,9 @@ export default function UsersPage() {
           />
           <Input
             id="user-password"
-            label="Password"
+            label={editingUser ? 'New Password (leave blank to keep current)' : 'Password'}
             type="password"
-            placeholder="Minimum 8 characters"
+            placeholder={editingUser ? 'Leave blank to keep current' : 'Minimum 8 characters'}
             value={form.password}
             onChange={(e) => setForm({ ...form, password: e.target.value })}
           />
@@ -223,7 +252,7 @@ export default function UsersPage() {
               Cancel
             </Button>
             <Button className="flex-1" onClick={handleSave} disabled={saving}>
-              {saving ? 'Creating…' : 'Create User'}
+              {saving ? (editingUser ? 'Saving…' : 'Creating…') : (editingUser ? 'Save Changes' : 'Create User')}
             </Button>
           </div>
         </div>
