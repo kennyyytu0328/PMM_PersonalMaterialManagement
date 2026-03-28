@@ -66,12 +66,16 @@ export function ItemForm({ itemId, initialData, defaultBarcode }: ItemFormProps)
           fetch('/api/categories'),
           fetch('/api/locations'),
         ])
+        if (!catRes.ok || !locRes.ok) {
+          console.error('Failed to fetch options:', catRes.status, locRes.status)
+          return
+        }
         const catJson = await catRes.json()
         const locJson = await locRes.json()
         if (catJson.success) setCategories(catJson.data)
         if (locJson.success) setLocations(locJson.data)
-      } catch {
-        // fail silently
+      } catch (error) {
+        console.error('Error fetching form options:', error)
       }
     }
     fetchOptions()

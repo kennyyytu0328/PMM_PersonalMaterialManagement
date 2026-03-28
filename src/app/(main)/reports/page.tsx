@@ -10,9 +10,9 @@ import { formatCurrency } from '@/lib/utils'
 
 interface SummaryStats {
   totalItems: number
-  inventoryValue: number
+  totalValue: number
   lowStockCount: number
-  checkedOutCount: number
+  activeCheckouts: number
 }
 
 interface MovementRow {
@@ -31,8 +31,8 @@ interface LowStockItem {
 
 interface CategoryBreakdown {
   categoryName: string
-  itemCount: number
-  totalValue: number
+  count: number
+  totalQuantity: string | number | null
 }
 
 interface ReportsData {
@@ -87,11 +87,18 @@ export default function ReportsPage() {
           lowStockRes.json(),
         ])
 
+        const rawMovements = movementsJson.success ? movementsJson.data?.movements ?? [] : []
+        const movements: MovementRow[] = rawMovements.map((m: { createdAt: string; type: 'IN' | 'OUT' | 'ADJUST'; quantity: number }) => ({
+          date: m.createdAt.slice(0, 10),
+          type: m.type,
+          total: Number(m.quantity) || 0,
+        }))
+
         setData({
           summary: summaryJson.success ? summaryJson.data : null,
-          movements: movementsJson.success ? movementsJson.data?.movements ?? [] : [],
-          lowStock: lowStockJson.success ? lowStockJson.data?.lowStock ?? [] : [],
-          categories: lowStockJson.success ? lowStockJson.data?.categories ?? [] : [],
+          movements,
+          lowStock: lowStockJson.success ? lowStockJson.data ?? [] : [],
+          categories: summaryJson.success ? summaryJson.data?.byCategory ?? [] : [],
         })
       } catch (err) {
         console.error('Failed to load reports:', err)
@@ -117,14 +124,14 @@ export default function ReportsPage() {
           <StatCard label="Total Items" value={summary.totalItems} />
           <StatCard
             label="Inventory Value"
-            value={formatCurrency(summary.inventoryValue)}
+            value={formatCurrency(summary.totalValue)}
           />
           <StatCard
             label="Low Stock"
             value={summary.lowStockCount}
             highlight={summary.lowStockCount > 0}
           />
-          <StatCard label="Checked Out" value={summary.checkedOutCount} />
+          <StatCard label="Checked Out" value={summary.activeCheckouts} />
         </div>
       )}
 
@@ -181,10 +188,10 @@ export default function ReportsPage() {
             <div className="divide-y divide-gray-100">
               {categories.map((cat) => (
                 <div key={cat.categoryName} className="flex items-center justify-between py-2.5">
-                  <p className="text-sm font-medium text-gray-900">{cat.categoryName}</p>
+                  <p className="text-sm font-medium text-gray-900">{cat.categoryName ?? 'Uncategorized'}</p>
                   <div className="text-right">
-                    <p className="text-sm text-gray-700">{cat.itemCount} items</p>
-                    <p className="text-xs text-gray-400">{formatCurrency(cat.totalValue)}</p>
+                    <p className="text-sm text-gray-700">{cat.count} items</p>
+                    <p className="text-xs text-gray-400">{Number(cat.totalQuantity) || 0} total qty</p>
                   </div>
                 </div>
               ))}

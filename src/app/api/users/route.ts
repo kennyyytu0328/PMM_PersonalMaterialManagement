@@ -8,16 +8,6 @@ import bcrypt from 'bcryptjs'
 
 export async function GET(_request: NextRequest) {
   try {
-    const session = await auth()
-    if (!session?.user) {
-      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
-    }
-
-    const userRole = (session.user as any).role
-    if (userRole !== 'admin') {
-      return NextResponse.json({ success: false, error: 'Forbidden: admin only' }, { status: 403 })
-    }
-
     const allUsers = await db
       .select({
         id: users.id,

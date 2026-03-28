@@ -8,8 +8,13 @@ export default auth((req) => {
   const { pathname } = req.nextUrl
   const session = req.auth
 
+  // Redirect unauthenticated users to login
+  if (!session?.user) {
+    return NextResponse.redirect(new URL('/login', req.url))
+  }
+
   // Admin-only routes
-  if (pathname.startsWith('/admin') && (session?.user as any)?.role !== 'admin') {
+  if (pathname.startsWith('/admin') && (session.user as any)?.role !== 'admin') {
     return NextResponse.redirect(new URL('/dashboard', req.url))
   }
 
@@ -24,5 +29,6 @@ export const config = {
     '/activity/:path*',
     '/reports/:path*',
     '/admin/:path*',
+    '/api/((?!auth).*)',
   ],
 }

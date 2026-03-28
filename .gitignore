@@ -1,5 +1,3 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # dependencies
 /node_modules
 /.pnp
@@ -19,9 +17,12 @@
 
 # production
 /build
+/dist
 
 # misc
 .DS_Store
+Thumbs.db
+Desktop.ini
 *.pem
 
 # debug
@@ -30,8 +31,13 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+!.env.example
 
 # vercel
 .vercel
@@ -42,12 +48,23 @@ next-env.d.ts
 
 # database
 data/*.db
+data/*.db-shm
+data/*.db-wal
+data/*.db-journal
 
 # superpowers
 .superpowers/
 
-# claude local settings
+# claude / AI tooling
 .claude/
+CLAUDE.md
 
-# env files (keep example, ignore actual)
-!.env.example
+# editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+*.log
