@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
@@ -50,6 +51,8 @@ const defaultFormData: ItemFormData = {
 export function ItemForm({ itemId, initialData, defaultBarcode }: ItemFormProps) {
   const router = useRouter()
   const { toast } = useToast()
+  const t = useTranslations('itemForm')
+  const tCommon = useTranslations('common')
   const [categories, setCategories] = useState<Category[]>([])
   const [locations, setLocations] = useState<Location[]>([])
   const [submitting, setSubmitting] = useState(false)
@@ -89,7 +92,7 @@ export function ItemForm({ itemId, initialData, defaultBarcode }: ItemFormProps)
     e.preventDefault()
 
     if (!form.name.trim()) {
-      toast('Item name is required', 'error')
+      toast(t('nameRequired'), 'error')
       return
     }
 
@@ -120,14 +123,14 @@ export function ItemForm({ itemId, initialData, defaultBarcode }: ItemFormProps)
       const json = await res.json()
 
       if (!json.success) {
-        toast(json.error ?? 'Failed to save item', 'error')
+        toast(json.error ?? t('saveFailed'), 'error')
         return
       }
 
-      toast(itemId ? 'Item updated successfully' : 'Item created successfully', 'success')
+      toast(itemId ? t('updatedSuccess') : t('createdSuccess'), 'success')
       router.push(itemId ? `/items/${itemId}` : `/items/${json.data.id}`)
     } catch {
-      toast('Something went wrong', 'error')
+      toast(tCommon('somethingWentWrong'), 'error')
     } finally {
       setSubmitting(false)
     }
@@ -140,54 +143,54 @@ export function ItemForm({ itemId, initialData, defaultBarcode }: ItemFormProps)
     <form onSubmit={handleSubmit} className="space-y-4">
       <Input
         id="name"
-        label="Name *"
+        label={t('nameLabel')}
         type="text"
         value={form.name}
         onChange={(e) => handleChange('name', e.target.value)}
-        placeholder="Item name"
+        placeholder={t('namePlaceholder')}
         required
       />
       <div className="space-y-1">
         <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-          Description
+          {t('descriptionLabel')}
         </label>
         <textarea
           id="description"
           value={form.description}
           onChange={(e) => handleChange('description', e.target.value)}
-          placeholder="Optional description"
+          placeholder={t('descriptionPlaceholder')}
           rows={3}
           className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
         />
       </div>
       <Input
         id="barcode"
-        label="Barcode"
+        label={t('barcodeLabel')}
         type="text"
         value={form.barcode}
         onChange={(e) => handleChange('barcode', e.target.value)}
-        placeholder="Scan or enter barcode"
+        placeholder={t('barcodePlaceholder')}
       />
       <Select
         id="categoryId"
-        label="Category"
+        label={t('categoryLabel')}
         options={categoryOptions}
-        placeholder="Select category"
+        placeholder={t('categoryPlaceholder')}
         value={form.categoryId}
         onChange={(e) => handleChange('categoryId', e.target.value)}
       />
       <Select
         id="locationId"
-        label="Location"
+        label={t('locationLabel')}
         options={locationOptions}
-        placeholder="Select location"
+        placeholder={t('locationPlaceholder')}
         value={form.locationId}
         onChange={(e) => handleChange('locationId', e.target.value)}
       />
       <div className="grid grid-cols-2 gap-3">
         <Input
           id="quantity"
-          label="Quantity"
+          label={t('quantityLabel')}
           type="number"
           min="0"
           value={form.quantity}
@@ -195,32 +198,32 @@ export function ItemForm({ itemId, initialData, defaultBarcode }: ItemFormProps)
         />
         <Input
           id="minQuantity"
-          label="Min Quantity"
+          label={t('minQuantityLabel')}
           type="number"
           min="0"
           value={form.minQuantity}
           onChange={(e) => handleChange('minQuantity', e.target.value)}
-          placeholder="Low stock threshold"
+          placeholder={t('minQuantityPlaceholder')}
         />
       </div>
       <div className="grid grid-cols-2 gap-3">
         <Input
           id="unit"
-          label="Unit"
+          label={t('unitLabel')}
           type="text"
           value={form.unit}
           onChange={(e) => handleChange('unit', e.target.value)}
-          placeholder="pcs, kg, m..."
+          placeholder={t('unitPlaceholder')}
         />
         <Input
           id="unitCost"
-          label="Unit Cost ($)"
+          label={t('unitCostLabel')}
           type="number"
           min="0"
           step="0.01"
           value={form.unitCost}
           onChange={(e) => handleChange('unitCost', e.target.value)}
-          placeholder="0.00"
+          placeholder={t('unitCostPlaceholder')}
         />
       </div>
       <div className="flex gap-2 pt-2">
@@ -230,10 +233,10 @@ export function ItemForm({ itemId, initialData, defaultBarcode }: ItemFormProps)
           className="flex-1"
           onClick={() => router.back()}
         >
-          Cancel
+          {tCommon('cancel')}
         </Button>
         <Button type="submit" className="flex-1" disabled={submitting}>
-          {submitting ? 'Saving...' : itemId ? 'Update Item' : 'Create Item'}
+          {submitting ? tCommon('saving') : itemId ? t('updateItem') : t('createItem')}
         </Button>
       </div>
     </form>

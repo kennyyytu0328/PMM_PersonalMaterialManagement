@@ -1,6 +1,6 @@
 'use client'
 
-import { Input } from '@/components/ui/input'
+import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 import { Search } from 'lucide-react'
 
@@ -39,6 +39,8 @@ export function ItemFilters({
   categories,
   locations,
 }: ItemFiltersProps) {
+  const t = useTranslations('items')
+
   return (
     <div className="space-y-3">
       <div className="relative">
@@ -50,7 +52,7 @@ export function ItemFilters({
           type="text"
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
-          placeholder="Search by name, SKU, or barcode..."
+          placeholder={t('searchPlaceholder')}
           className="block w-full rounded-lg border border-gray-300 py-2 pl-9 pr-3 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
         />
       </div>
@@ -61,7 +63,7 @@ export function ItemFilters({
           onChange={(e) => onCategoryChange(e.target.value)}
           className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
         >
-          <option value="">All Categories</option>
+          <option value="">{t('allCategories')}</option>
           {categories.map((c) => (
             <option key={c.id} value={String(c.id)}>
               {c.name}
@@ -74,7 +76,7 @@ export function ItemFilters({
           onChange={(e) => onLocationChange(e.target.value)}
           className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
         >
-          <option value="">All Locations</option>
+          <option value="">{t('allLocations')}</option>
           {locations.map((l) => (
             <option key={l.id} value={String(l.id)}>
               {l.name}
@@ -91,7 +93,7 @@ export function ItemFilters({
               : 'border-gray-300 bg-white text-gray-600 hover:bg-gray-50'
           )}
         >
-          Low Stock
+          {t('lowStockFilter')}
         </button>
       </div>
     </div>

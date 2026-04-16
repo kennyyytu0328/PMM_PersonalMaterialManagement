@@ -2,17 +2,19 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { Users, Tag, MapPin } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const tabs = [
-  { href: '/admin/users', label: 'Users', icon: Users },
-  { href: '/admin/categories', label: 'Categories', icon: Tag },
-  { href: '/admin/locations', label: 'Locations', icon: MapPin },
-]
+  { href: '/admin/users', key: 'users', icon: Users },
+  { href: '/admin/categories', key: 'categories', icon: Tag },
+  { href: '/admin/locations', key: 'locations', icon: MapPin },
+] as const
 
 export function AdminTabs() {
   const pathname = usePathname()
+  const t = useTranslations('admin.tabs')
 
   return (
     <div className="flex gap-1 border-b border-gray-200 px-4 pt-3 pb-0">
@@ -30,7 +32,7 @@ export function AdminTabs() {
             )}
           >
             <tab.icon size={16} />
-            {tab.label}
+            {t(tab.key)}
           </Link>
         )
       })}

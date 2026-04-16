@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { Users, Plus, Trash2, Pencil } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Modal } from '@/components/ui/modal'
@@ -36,6 +37,9 @@ const ROLE_VARIANT: Record<string, 'danger' | 'info' | 'default'> = {
 
 export default function UsersPage() {
   const { toast } = useToast()
+  const t = useTranslations('users')
+  const tCommon = useTranslations('common')
+  const tRoles = useTranslations('users.roles')
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
   const [modalOpen, setModalOpen] = useState(false)
@@ -49,11 +53,11 @@ export default function UsersPage() {
       const json = await res.json()
       if (json.success) setUsers(json.data)
     } catch {
-      toast('Failed to load users', 'error')
+      toast(t('loadFailed'), 'error')
     } finally {
       setLoading(false)
     }
-  }, [toast])
+  }, [toast, t])
 
   useEffect(() => {
     fetchUsers()
@@ -79,19 +83,19 @@ export default function UsersPage() {
 
   const handleSave = async () => {
     if (!form.name.trim()) {
-      toast('Name is required', 'error')
+      toast(t('nameRequired'), 'error')
       return
     }
     if (!form.email.trim()) {
-      toast('Email is required', 'error')
+      toast(t('emailRequired'), 'error')
       return
     }
     if (!editingUser && !form.password) {
-      toast('Password is required', 'error')
+      toast(t('passwordRequired'), 'error')
       return
     }
     if (form.password && form.password.length < 8) {
-      toast('Password must be at least 8 characters', 'error')
+      toast(t('passwordMinLength'), 'error')
       return
     }
 
@@ -117,42 +121,42 @@ export default function UsersPage() {
       })
       const json = await res.json()
       if (json.success) {
-        toast(isEdit ? 'User updated' : 'User created', 'success')
+        toast(isEdit ? t('updated') : t('created'), 'success')
         closeModal()
         await fetchUsers()
       } else {
-        toast(json.error ?? `Failed to ${isEdit ? 'update' : 'create'} user`, 'error')
+        toast(json.error ?? (isEdit ? t('updateFailed') : t('createFailed')), 'error')
       }
     } catch {
-      toast(`Failed to ${editingUser ? 'update' : 'create'} user`, 'error')
+      toast(editingUser ? t('updateFailed') : t('createFailed'), 'error')
     } finally {
       setSaving(false)
     }
   }
 
   const handleDelete = async (user: User) => {
-    if (!confirm(`Delete user "${user.name}"? This cannot be undone.`)) return
+    if (!confirm(t('confirmDelete', { name: user.name }))) return
     try {
       const res = await fetch(`/api/users/${user.id}`, { method: 'DELETE' })
       const json = await res.json()
       if (json.success) {
-        toast('User deleted', 'success')
+        toast(t('deleted'), 'success')
         await fetchUsers()
       } else {
-        toast(json.error ?? 'Failed to delete', 'error')
+        toast(json.error ?? t('deleteFailed'), 'error')
       }
     } catch {
-      toast('Failed to delete user', 'error')
+      toast(t('deleteFailed'), 'error')
     }
   }
 
   return (
     <div className="px-4 py-4">
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-lg font-bold text-gray-900">Users</h1>
+        <h1 className="text-lg font-bold text-gray-900">{t('title')}</h1>
         <Button size="sm" onClick={openAdd}>
           <Plus size={16} className="mr-1" />
-          Add User
+          {t('add')}
         </Button>
       </div>
 
@@ -161,11 +165,11 @@ export default function UsersPage() {
       ) : users.length === 0 ? (
         <EmptyState
           icon={<Users size={40} />}
-          title="No users"
-          description="Add user accounts to allow access to the system."
+          title={t('noUsers')}
+          description={t('noUsersDesc')}
           action={
             <Button size="sm" onClick={openAdd}>
-              Add User
+              {t('add')}
             </Button>
           }
         />
@@ -180,7 +184,7 @@ export default function UsersPage() {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <p className="font-medium text-gray-900">{user.name}</p>
-                    <Badge variant={ROLE_VARIANT[user.role]}>{user.role}</Badge>
+                    <Badge variant={ROLE_VARIANT[user.role]}>{tRoles(user.role)}</Badge>
                   </div>
                   <p className="mt-0.5 text-sm text-gray-500">{user.email}</p>
                   <p className="mt-1 text-xs text-gray-400">{formatDate(user.createdAt)}</p>
@@ -205,34 +209,34 @@ export default function UsersPage() {
         </div>
       )}
 
-      <Modal open={modalOpen} onClose={closeModal} title={editingUser ? 'Edit User' : 'Add User'}>
+      <Modal open={modalOpen} onClose={closeModal} title={editingUser ? t('modalEdit') : t('modalAdd')}>
         <div className="space-y-4">
           <Input
             id="user-name"
-            label="Name"
-            placeholder="Full name"
+            label={t('nameLabel')}
+            placeholder={t('namePlaceholder')}
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
           />
           <Input
             id="user-email"
-            label="Email"
+            label={t('emailLabel')}
             type="email"
-            placeholder="user@example.com"
+            placeholder={t('emailPlaceholder')}
             value={form.email}
             onChange={(e) => setForm({ ...form, email: e.target.value })}
           />
           <Input
             id="user-password"
-            label={editingUser ? 'New Password (leave blank to keep current)' : 'Password'}
+            label={editingUser ? t('newPasswordLabel') : t('passwordLabel')}
             type="password"
-            placeholder={editingUser ? 'Leave blank to keep current' : 'Minimum 8 characters'}
+            placeholder={editingUser ? t('passwordEditPlaceholder') : t('passwordPlaceholder')}
             value={form.password}
             onChange={(e) => setForm({ ...form, password: e.target.value })}
           />
           <div className="space-y-1">
             <label htmlFor="user-role" className="block text-sm font-medium text-gray-700">
-              Role
+              {t('roleLabel')}
             </label>
             <select
               id="user-role"
@@ -242,17 +246,19 @@ export default function UsersPage() {
               }
               className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
-              <option value="viewer">Viewer</option>
-              <option value="staff">Staff</option>
-              <option value="admin">Admin</option>
+              <option value="viewer">{tRoles('viewer')}</option>
+              <option value="staff">{tRoles('staff')}</option>
+              <option value="admin">{tRoles('admin')}</option>
             </select>
           </div>
           <div className="flex gap-2 pt-2">
             <Button variant="secondary" className="flex-1" onClick={closeModal}>
-              Cancel
+              {tCommon('cancel')}
             </Button>
             <Button className="flex-1" onClick={handleSave} disabled={saving}>
-              {saving ? (editingUser ? 'Saving…' : 'Creating…') : (editingUser ? 'Save Changes' : 'Create User')}
+              {saving
+                ? (editingUser ? t('saving') : t('creating'))
+                : (editingUser ? t('save') : t('create'))}
             </Button>
           </div>
         </div>

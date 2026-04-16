@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { MapPin, Plus, Pencil, Trash2 } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Modal } from '@/components/ui/modal'
@@ -26,6 +27,8 @@ const EMPTY_FORM: FormState = { name: '', description: '' }
 
 export default function LocationsPage() {
   const { toast } = useToast()
+  const t = useTranslations('locations')
+  const tCommon = useTranslations('common')
   const [locations, setLocations] = useState<Location[]>([])
   const [loading, setLoading] = useState(true)
   const [modalOpen, setModalOpen] = useState(false)
@@ -39,11 +42,11 @@ export default function LocationsPage() {
       const json = await res.json()
       if (json.success) setLocations(json.data)
     } catch {
-      toast('Failed to load locations', 'error')
+      toast(t('loadFailed'), 'error')
     } finally {
       setLoading(false)
     }
-  }, [toast])
+  }, [toast, t])
 
   useEffect(() => {
     fetchLocations()
@@ -69,7 +72,7 @@ export default function LocationsPage() {
 
   const handleSave = async () => {
     if (!form.name.trim()) {
-      toast('Name is required', 'error')
+      toast(t('nameRequired'), 'error')
       return
     }
 
@@ -87,42 +90,42 @@ export default function LocationsPage() {
       })
       const json = await res.json()
       if (json.success) {
-        toast(editing ? 'Location updated' : 'Location created', 'success')
+        toast(editing ? t('updated') : t('created'), 'success')
         closeModal()
         await fetchLocations()
       } else {
-        toast(json.error ?? 'Failed to save', 'error')
+        toast(json.error ?? t('saveFailed'), 'error')
       }
     } catch {
-      toast('Failed to save location', 'error')
+      toast(t('saveFailed'), 'error')
     } finally {
       setSaving(false)
     }
   }
 
   const handleDelete = async (loc: Location) => {
-    if (!confirm(`Delete location "${loc.name}"? This cannot be undone.`)) return
+    if (!confirm(t('confirmDelete', { name: loc.name }))) return
     try {
       const res = await fetch(`/api/locations/${loc.id}`, { method: 'DELETE' })
       const json = await res.json()
       if (json.success) {
-        toast('Location deleted', 'success')
+        toast(t('deleted'), 'success')
         await fetchLocations()
       } else {
-        toast(json.error ?? 'Failed to delete', 'error')
+        toast(json.error ?? t('deleteFailed'), 'error')
       }
     } catch {
-      toast('Failed to delete location', 'error')
+      toast(t('deleteFailed'), 'error')
     }
   }
 
   return (
     <div className="px-4 py-4">
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-lg font-bold text-gray-900">Locations</h1>
+        <h1 className="text-lg font-bold text-gray-900">{t('title')}</h1>
         <Button size="sm" onClick={openAdd}>
           <Plus size={16} className="mr-1" />
-          Add
+          {t('add')}
         </Button>
       </div>
 
@@ -131,11 +134,11 @@ export default function LocationsPage() {
       ) : locations.length === 0 ? (
         <EmptyState
           icon={<MapPin size={40} />}
-          title="No locations"
-          description="Create locations to track where inventory items are stored."
+          title={t('noLocations')}
+          description={t('noLocationsDesc')}
           action={
             <Button size="sm" onClick={openAdd}>
-              Add Location
+              {t('addLocation')}
             </Button>
           }
         />
@@ -177,29 +180,29 @@ export default function LocationsPage() {
       <Modal
         open={modalOpen}
         onClose={closeModal}
-        title={editing ? 'Edit Location' : 'Add Location'}
+        title={editing ? t('modalEdit') : t('modalAdd')}
       >
         <div className="space-y-4">
           <Input
             id="loc-name"
-            label="Name"
-            placeholder="e.g. Warehouse A"
+            label={t('nameLabel')}
+            placeholder={t('namePlaceholder')}
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
           />
           <Input
             id="loc-desc"
-            label="Description (optional)"
-            placeholder="Short description"
+            label={t('descriptionLabel')}
+            placeholder={t('descriptionPlaceholder')}
             value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
           />
           <div className="flex gap-2 pt-2">
             <Button variant="secondary" className="flex-1" onClick={closeModal}>
-              Cancel
+              {tCommon('cancel')}
             </Button>
             <Button className="flex-1" onClick={handleSave} disabled={saving}>
-              {saving ? 'Saving…' : editing ? 'Update' : 'Create'}
+              {saving ? tCommon('saving') : editing ? t('update') : tCommon('create')}
             </Button>
           </div>
         </div>

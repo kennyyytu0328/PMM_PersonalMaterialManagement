@@ -4,25 +4,34 @@ import { useSession, signOut } from 'next-auth/react'
 import { Search, User, LogOut, Settings, KeyRound } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
+import { LanguageSwitcher } from './language-switcher'
 
 export function Header() {
   const { data: session } = useSession()
   const [menuOpen, setMenuOpen] = useState(false)
+  const t = useTranslations('header')
 
   return (
     <header className="sticky top-0 z-30 border-b border-gray-200 bg-white">
       <div className="flex items-center justify-between px-4 py-3">
         <Link href="/dashboard" className="text-lg font-bold text-gray-900">
-          PMM
+          {t('appName')}
         </Link>
         <div className="flex items-center gap-3">
-          <Link href="/items?search=true" className="text-gray-500 hover:text-gray-700">
+          <LanguageSwitcher />
+          <Link
+            href="/items?search=true"
+            className="text-gray-500 hover:text-gray-700"
+            aria-label={t('search')}
+          >
             <Search size={20} />
           </Link>
           <div className="relative">
             <button
               onClick={() => setMenuOpen(!menuOpen)}
               className="text-gray-500 hover:text-gray-700"
+              aria-label={t('userMenu')}
             >
               <User size={20} />
             </button>
@@ -40,7 +49,7 @@ export function Header() {
                     onClick={() => setMenuOpen(false)}
                   >
                     <KeyRound size={16} />
-                    Change Password
+                    {t('changePassword')}
                   </Link>
                   {(session?.user as any)?.role === 'admin' && (
                     <Link
@@ -49,7 +58,7 @@ export function Header() {
                       onClick={() => setMenuOpen(false)}
                     >
                       <Settings size={16} />
-                      Admin Settings
+                      {t('adminSettings')}
                     </Link>
                   )}
                   <button
@@ -57,7 +66,7 @@ export function Header() {
                     className="flex w-full items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-gray-50"
                   >
                     <LogOut size={16} />
-                    Sign Out
+                    {t('signOut')}
                   </button>
                 </div>
               </>

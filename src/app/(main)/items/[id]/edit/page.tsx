@@ -3,6 +3,7 @@
 import { use, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { ArrowLeft } from 'lucide-react'
 import { ItemForm } from '@/components/items/item-form'
 import { Loading } from '@/components/ui/loading'
@@ -23,6 +24,7 @@ interface ItemData {
 export default function EditItemPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const router = useRouter()
+  const t = useTranslations('items')
   const [item, setItem] = useState<ItemData | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -47,7 +49,7 @@ export default function EditItemPage({ params }: { params: Promise<{ id: string 
     fetchItem()
   }, [id])
 
-  if (loading) return <Loading text="Loading item..." />
+  if (loading) return <Loading text={t('loadingItem')} />
   if (!item) return null
 
   const initialData = {
@@ -70,7 +72,7 @@ export default function EditItemPage({ params }: { params: Promise<{ id: string 
             <ArrowLeft size={20} />
           </button>
         </Link>
-        <h1 className="text-xl font-bold text-gray-900">Edit Item</h1>
+        <h1 className="text-xl font-bold text-gray-900">{t('editItemTitle')}</h1>
       </div>
 
       <ItemForm itemId={item.id} initialData={initialData} />

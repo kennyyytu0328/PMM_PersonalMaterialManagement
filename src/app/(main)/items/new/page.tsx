@@ -2,6 +2,7 @@
 
 import { use } from 'react'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { ArrowLeft } from 'lucide-react'
 import { ItemForm } from '@/components/items/item-form'
 
@@ -12,6 +13,7 @@ export default function NewItemPage({
 }) {
   const params = use(searchParams)
   const barcode = params.barcode
+  const t = useTranslations('items')
 
   return (
     <div className="mx-auto max-w-2xl space-y-4 px-4 py-6">
@@ -21,7 +23,7 @@ export default function NewItemPage({
             <ArrowLeft size={20} />
           </button>
         </Link>
-        <h1 className="text-xl font-bold text-gray-900">New Item</h1>
+        <h1 className="text-xl font-bold text-gray-900">{t('newItemTitle')}</h1>
       </div>
 
       <ItemForm defaultBarcode={barcode} />

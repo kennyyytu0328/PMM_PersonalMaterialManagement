@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { BarChart2, AlertTriangle } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Loading } from '@/components/ui/loading'
@@ -64,6 +65,8 @@ function StatCard({ label, value, sub, highlight }: StatCardProps) {
 }
 
 export default function ReportsPage() {
+  const t = useTranslations('reports')
+  const tStats = useTranslations('reports.stats')
   const [data, setData] = useState<ReportsData>({
     summary: null,
     movements: [],
@@ -116,31 +119,29 @@ export default function ReportsPage() {
 
   return (
     <div className="px-4 py-4 space-y-6">
-      <h1 className="text-lg font-bold text-gray-900">Reports</h1>
+      <h1 className="text-lg font-bold text-gray-900">{t('title')}</h1>
 
-      {/* Summary Stats */}
       {summary && (
         <div className="grid grid-cols-2 gap-3">
-          <StatCard label="Total Items" value={summary.totalItems} />
+          <StatCard label={tStats('totalItems')} value={summary.totalItems} />
           <StatCard
-            label="Inventory Value"
+            label={tStats('inventoryValue')}
             value={formatCurrency(summary.totalValue)}
           />
           <StatCard
-            label="Low Stock"
+            label={tStats('lowStock')}
             value={summary.lowStockCount}
             highlight={summary.lowStockCount > 0}
           />
-          <StatCard label="Checked Out" value={summary.activeCheckouts} />
+          <StatCard label={tStats('checkedOut')} value={summary.activeCheckouts} />
         </div>
       )}
 
-      {/* Stock Movement Chart */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <BarChart2 size={18} />
-            Stock Movements (Last 30 Days)
+            {t('stockMovements')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -148,13 +149,12 @@ export default function ReportsPage() {
         </CardContent>
       </Card>
 
-      {/* Low Stock Items */}
       {lowStock.length > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-red-700">
               <AlertTriangle size={18} />
-              Low Stock Items
+              {t('lowStockTitle')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -166,9 +166,11 @@ export default function ReportsPage() {
                     <p className="text-xs text-gray-400">{item.sku}</p>
                   </div>
                   <div className="text-right">
-                    <Badge variant="danger">{item.quantity} left</Badge>
+                    <Badge variant="danger">{t('leftBadge', { count: item.quantity })}</Badge>
                     {item.minQuantity !== null && (
-                      <p className="mt-0.5 text-xs text-gray-400">min: {item.minQuantity}</p>
+                      <p className="mt-0.5 text-xs text-gray-400">
+                        {t('minLabel', { min: item.minQuantity })}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -178,20 +180,23 @@ export default function ReportsPage() {
         </Card>
       )}
 
-      {/* By Category */}
       {categories.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>By Category</CardTitle>
+            <CardTitle>{t('byCategory')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="divide-y divide-gray-100">
               {categories.map((cat) => (
                 <div key={cat.categoryName} className="flex items-center justify-between py-2.5">
-                  <p className="text-sm font-medium text-gray-900">{cat.categoryName ?? 'Uncategorized'}</p>
+                  <p className="text-sm font-medium text-gray-900">
+                    {cat.categoryName ?? t('uncategorized')}
+                  </p>
                   <div className="text-right">
-                    <p className="text-sm text-gray-700">{cat.count} items</p>
-                    <p className="text-xs text-gray-400">{Number(cat.totalQuantity) || 0} total qty</p>
+                    <p className="text-sm text-gray-700">{t('itemsCount', { count: cat.count })}</p>
+                    <p className="text-xs text-gray-400">
+                      {t('totalQty', { qty: Number(cat.totalQuantity) || 0 })}
+                    </p>
                   </div>
                 </div>
               ))}

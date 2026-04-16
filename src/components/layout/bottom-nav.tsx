@@ -3,18 +3,20 @@
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { Home, Package, Camera, ArrowLeftRight, BarChart3 } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 
 const navItems = [
-  { href: '/dashboard', label: 'Home', icon: Home },
-  { href: '/items', label: 'Items', icon: Package },
-  { href: '/scan', label: 'Scan', icon: Camera },
-  { href: '/activity', label: 'Activity', icon: ArrowLeftRight },
-  { href: '/reports', label: 'Reports', icon: BarChart3 },
-]
+  { href: '/dashboard', key: 'home', icon: Home },
+  { href: '/items', key: 'items', icon: Package },
+  { href: '/scan', key: 'scan', icon: Camera },
+  { href: '/activity', key: 'activity', icon: ArrowLeftRight },
+  { href: '/reports', key: 'reports', icon: BarChart3 },
+] as const
 
 export function BottomNav() {
   const pathname = usePathname()
+  const t = useTranslations('nav')
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-gray-200 bg-white pb-safe">
@@ -41,7 +43,7 @@ export function BottomNav() {
                 <item.icon size={22} />
               )}
               <span className={cn('text-[10px] mt-1', isScan && 'text-blue-600')}>
-                {item.label}
+                {t(item.key)}
               </span>
             </Link>
           )

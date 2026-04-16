@@ -3,6 +3,7 @@
 import { useSession } from 'next-auth/react'
 import { useState } from 'react'
 import { KeyRound, User } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
@@ -29,6 +30,8 @@ const ROLE_VARIANT: Record<string, 'danger' | 'info' | 'default'> = {
 export default function ProfilePage() {
   const { data: session } = useSession()
   const { toast } = useToast()
+  const t = useTranslations('profile')
+  const tRoles = useTranslations('profile.roles')
   const [form, setForm] = useState<PasswordForm>(EMPTY_PASSWORD_FORM)
   const [saving, setSaving] = useState(false)
 
@@ -37,15 +40,15 @@ export default function ProfilePage() {
 
   const handleChangePassword = async () => {
     if (!form.currentPassword) {
-      toast('Current password is required', 'error')
+      toast(t('currentRequired'), 'error')
       return
     }
     if (form.newPassword.length < 8) {
-      toast('New password must be at least 8 characters', 'error')
+      toast(t('newMinLength'), 'error')
       return
     }
     if (form.newPassword !== form.confirmPassword) {
-      toast('New passwords do not match', 'error')
+      toast(t('mismatchError'), 'error')
       return
     }
 
@@ -61,13 +64,13 @@ export default function ProfilePage() {
       })
       const json = await res.json()
       if (json.success) {
-        toast('Password changed successfully', 'success')
+        toast(t('changedSuccess'), 'success')
         setForm(EMPTY_PASSWORD_FORM)
       } else {
-        toast(json.error ?? 'Failed to change password', 'error')
+        toast(json.error ?? t('changeFailed'), 'error')
       }
     } catch {
-      toast('Failed to change password', 'error')
+      toast(t('changeFailed'), 'error')
     } finally {
       setSaving(false)
     }
@@ -75,7 +78,7 @@ export default function ProfilePage() {
 
   return (
     <div className="px-4 py-4">
-      <h1 className="mb-4 text-lg font-bold text-gray-900">Profile</h1>
+      <h1 className="mb-4 text-lg font-bold text-gray-900">{t('title')}</h1>
 
       <div className="mb-6 rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
         <div className="flex items-center gap-3">
@@ -85,7 +88,7 @@ export default function ProfilePage() {
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
               <p className="font-medium text-gray-900">{user?.name}</p>
-              <Badge variant={ROLE_VARIANT[role]}>{role}</Badge>
+              <Badge variant={ROLE_VARIANT[role]}>{tRoles(role as 'admin' | 'staff' | 'viewer')}</Badge>
             </div>
             <p className="text-sm text-gray-500">{user?.email}</p>
           </div>
@@ -95,35 +98,35 @@ export default function ProfilePage() {
       <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
         <div className="mb-4 flex items-center gap-2">
           <KeyRound size={20} className="text-gray-600" />
-          <h2 className="text-base font-semibold text-gray-900">Change Password</h2>
+          <h2 className="text-base font-semibold text-gray-900">{t('changePasswordHeader')}</h2>
         </div>
         <div className="space-y-4">
           <Input
             id="current-password"
-            label="Current Password"
+            label={t('currentPasswordLabel')}
             type="password"
-            placeholder="Enter current password"
+            placeholder={t('currentPasswordPlaceholder')}
             value={form.currentPassword}
             onChange={(e) => setForm({ ...form, currentPassword: e.target.value })}
           />
           <Input
             id="new-password"
-            label="New Password"
+            label={t('newPasswordLabel')}
             type="password"
-            placeholder="Minimum 8 characters"
+            placeholder={t('newPasswordPlaceholder')}
             value={form.newPassword}
             onChange={(e) => setForm({ ...form, newPassword: e.target.value })}
           />
           <Input
             id="confirm-password"
-            label="Confirm New Password"
+            label={t('confirmNewPasswordLabel')}
             type="password"
-            placeholder="Re-enter new password"
+            placeholder={t('confirmNewPasswordPlaceholder')}
             value={form.confirmPassword}
             onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })}
           />
           <Button className="w-full" onClick={handleChangePassword} disabled={saving}>
-            {saving ? 'Changing Password...' : 'Change Password'}
+            {saving ? t('changing') : t('submit')}
           </Button>
         </div>
       </div>

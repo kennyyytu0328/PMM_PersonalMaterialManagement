@@ -4,14 +4,10 @@ import { useState, useCallback } from 'react'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import { ScanLine, Package, Plus, RotateCcw } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Loading } from '@/components/ui/loading'
-
-const BarcodeScanner = dynamic(
-  () => import('@/components/scanner/barcode-scanner').then((m) => m.BarcodeScanner),
-  { ssr: false, loading: () => <Loading text="Starting camera..." /> }
-)
 
 type ScanState = 'scanning' | 'loading' | 'found' | 'not-found'
 
@@ -26,7 +22,13 @@ interface FoundItem {
   location: { name: string } | null
 }
 
+const BarcodeScanner = dynamic(
+  () => import('@/components/scanner/barcode-scanner').then((m) => m.BarcodeScanner),
+  { ssr: false, loading: () => <Loading /> }
+)
+
 export default function ScanPage() {
+  const t = useTranslations('scan')
   const [state, setState] = useState<ScanState>('scanning')
   const [scannedBarcode, setScannedBarcode] = useState('')
   const [foundItem, setFoundItem] = useState<FoundItem | null>(null)
@@ -64,8 +66,8 @@ export default function ScanPage() {
   return (
     <div className="mx-auto max-w-2xl space-y-4 px-4 py-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Scan Barcode</h1>
-        <p className="mt-1 text-sm text-gray-500">Point camera at a barcode to look up an item</p>
+        <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
+        <p className="mt-1 text-sm text-gray-500">{t('subtitle')}</p>
       </div>
 
       {(state === 'scanning' || state === 'loading') && (
@@ -74,13 +76,13 @@ export default function ScanPage() {
             {state === 'scanning' && <BarcodeScanner onScan={handleScan} />}
             {state === 'loading' && (
               <div className="flex h-48 items-center justify-center">
-                <Loading text="Looking up barcode..." />
+                <Loading text={t('lookingUp')} />
               </div>
             )}
           </div>
           <p className="text-center text-xs text-gray-400">
             <ScanLine size={14} className="inline mr-1" />
-            Supports EAN-13, EAN-8, UPC-A, UPC-E, Code 128, Code 39
+            {t('supportedFormats')}
           </p>
         </div>
       )}
@@ -95,9 +97,9 @@ export default function ScanPage() {
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <p className="font-semibold text-gray-900">{foundItem.name}</p>
-                  {isLowStock && <Badge variant="warning">Low Stock</Badge>}
+                  {isLowStock && <Badge variant="warning">{t('lowStockBadge')}</Badge>}
                 </div>
-                <p className="text-xs text-gray-500">SKU: {foundItem.sku}</p>
+                <p className="text-xs text-gray-500">{t('skuLabel')}: {foundItem.sku}</p>
                 {foundItem.category && (
                   <p className="text-xs text-gray-500">{foundItem.category.name}</p>
                 )}
@@ -114,9 +116,9 @@ export default function ScanPage() {
 
           <div className="flex gap-2">
             <Link href={`/items/${foundItem.id}`} className="flex-1">
-              <Button className="w-full">View Details</Button>
+              <Button className="w-full">{t('viewDetails')}</Button>
             </Link>
-            <Button variant="secondary" onClick={handleScanAgain}>
+            <Button variant="secondary" onClick={handleScanAgain} aria-label={t('scanAgain')}>
               <RotateCcw size={16} />
             </Button>
           </div>
@@ -127,7 +129,7 @@ export default function ScanPage() {
         <div className="space-y-4">
           <div className="rounded-xl border border-yellow-200 bg-yellow-50 p-4 text-center">
             <ScanLine size={32} className="mx-auto mb-2 text-yellow-500" />
-            <p className="font-medium text-gray-900">No item found</p>
+            <p className="font-medium text-gray-900">{t('noItemFound')}</p>
             <p className="mt-1 text-sm text-gray-500 font-mono">{scannedBarcode}</p>
           </div>
 
@@ -135,10 +137,10 @@ export default function ScanPage() {
             <Link href={`/items/new?barcode=${encodeURIComponent(scannedBarcode)}`} className="flex-1">
               <Button className="w-full">
                 <Plus size={16} className="mr-1" />
-                Add as New Item
+                {t('addAsNew')}
               </Button>
             </Link>
-            <Button variant="secondary" onClick={handleScanAgain}>
+            <Button variant="secondary" onClick={handleScanAgain} aria-label={t('scanAgain')}>
               <RotateCcw size={16} />
             </Button>
           </div>

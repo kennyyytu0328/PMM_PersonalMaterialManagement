@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import {
   BarChart,
   Bar,
@@ -40,12 +41,14 @@ function groupByDate(data: MovementData[]): ChartDataPoint[] {
 }
 
 export function StockChart({ data }: StockChartProps) {
+  const t = useTranslations('reports')
+  const tLegend = useTranslations('reports.chartLegend')
   const chartData = groupByDate(data)
 
   if (chartData.length === 0) {
     return (
       <div className="flex h-48 items-center justify-center text-sm text-gray-400">
-        No movement data available
+        {t('noMovementData')}
       </div>
     )
   }
@@ -60,9 +63,9 @@ export function StockChart({ data }: StockChartProps) {
           contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid #e5e7eb' }}
         />
         <Legend wrapperStyle={{ fontSize: 12 }} />
-        <Bar dataKey="IN" name="Stock In" fill="#22c55e" radius={[4, 4, 0, 0]} />
-        <Bar dataKey="OUT" name="Stock Out" fill="#ef4444" radius={[4, 4, 0, 0]} />
-        <Bar dataKey="ADJUST" name="Adjusted" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+        <Bar dataKey="IN" name={tLegend('IN')} fill="#22c55e" radius={[4, 4, 0, 0]} />
+        <Bar dataKey="OUT" name={tLegend('OUT')} fill="#ef4444" radius={[4, 4, 0, 0]} />
+        <Bar dataKey="ADJUST" name={tLegend('ADJUST')} fill="#3b82f6" radius={[4, 4, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   )

@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
 import { Plus, Package } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { ItemCard } from '@/components/items/item-card'
 import { ItemFilters } from '@/components/items/item-filters'
@@ -31,6 +32,7 @@ interface Item {
 }
 
 export default function ItemsPage() {
+  const t = useTranslations('items')
   const [items, setItems] = useState<Item[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [locations, setLocations] = useState<Location[]>([])
@@ -110,13 +112,13 @@ export default function ItemsPage() {
     <div className="mx-auto max-w-2xl space-y-4 px-4 py-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Items</h1>
-          <p className="mt-0.5 text-sm text-gray-500">{total} total items</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
+          <p className="mt-0.5 text-sm text-gray-500">{t('totalCount', { count: total })}</p>
         </div>
         <Link href="/items/new">
           <Button size="sm">
             <Plus size={16} className="mr-1" />
-            Add
+            {t('add')}
           </Button>
         </Link>
       </div>
@@ -135,18 +137,18 @@ export default function ItemsPage() {
       />
 
       {loading ? (
-        <Loading text="Loading items..." />
+        <Loading text={t('loading')} />
       ) : items.length === 0 ? (
         <EmptyState
           icon={<Package size={40} />}
-          title="No items found"
-          description={search ? 'Try adjusting your search or filters.' : 'Get started by adding your first item.'}
+          title={t('noItemsTitle')}
+          description={search ? t('noItemsSearchHint') : t('noItemsEmptyHint')}
           action={
             !search ? (
               <Link href="/items/new">
                 <Button size="sm">
                   <Plus size={16} className="mr-1" />
-                  Add Item
+                  {t('addItem')}
                 </Button>
               </Link>
             ) : undefined

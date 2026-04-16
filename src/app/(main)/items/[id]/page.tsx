@@ -4,7 +4,8 @@ import { useEffect, useState, use } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
-import { ArrowLeft, Edit, Package, MapPin, Tag, Calendar } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import { ArrowLeft, Edit, Package, MapPin, Tag } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
@@ -54,6 +55,9 @@ export default function ItemDetailPage({ params }: { params: Promise<{ id: strin
   const router = useRouter()
   const { data: session } = useSession()
   const { toast } = useToast()
+  const t = useTranslations('itemDetail')
+  const tCommon = useTranslations('common')
+  const tItems = useTranslations('items')
 
   const [item, setItem] = useState<Item | null>(null)
   const [transactions, setTransactions] = useState<Transaction[]>([])
@@ -110,20 +114,20 @@ export default function ItemDetailPage({ params }: { params: Promise<{ id: strin
       const json = await res.json()
 
       if (!json.success) {
-        toast(json.error ?? 'Failed to return item', 'error')
+        toast(json.error ?? t('returnFailed'), 'error')
         return
       }
 
-      toast('Item returned successfully', 'success')
+      toast(t('returnedSuccess'), 'success')
       loadData()
     } catch {
-      toast('Something went wrong', 'error')
+      toast(tCommon('somethingWentWrong'), 'error')
     } finally {
       setReturningId(null)
     }
   }
 
-  if (loading) return <Loading text="Loading item..." />
+  if (loading) return <Loading text={tItems('loadingItem')} />
   if (!item) return null
 
   const isLowStock = item.minQuantity != null && item.quantity <= item.minQuantity
@@ -157,13 +161,13 @@ export default function ItemDetailPage({ params }: { params: Promise<{ id: strin
                 </p>
                 {isLowStock && (
                   <Badge variant="warning" className="mt-1">
-                    Low Stock — min {item.minQuantity}
+                    {t('lowStockMin', { min: item.minQuantity ?? 0 })}
                   </Badge>
                 )}
               </div>
               {item.unitCost != null && (
                 <div className="text-right">
-                  <p className="text-sm text-gray-500">Unit Cost</p>
+                  <p className="text-sm text-gray-500">{t('unitCost')}</p>
                   <p className="text-lg font-semibold text-gray-900">{formatCurrency(item.unitCost)}</p>
                 </div>
               )}
@@ -172,27 +176,27 @@ export default function ItemDetailPage({ params }: { params: Promise<{ id: strin
             <div className="space-y-1.5 border-t border-gray-100 pt-3 text-sm text-gray-600">
               <div className="flex items-center gap-2">
                 <Package size={14} className="text-gray-400" />
-                <span className="font-medium">SKU:</span>
+                <span className="font-medium">{t('skuLabel')}</span>
                 <span className="font-mono">{item.sku}</span>
               </div>
               {item.barcode && (
                 <div className="flex items-center gap-2">
                   <Package size={14} className="text-gray-400" />
-                  <span className="font-medium">Barcode:</span>
+                  <span className="font-medium">{t('barcodeLabel')}</span>
                   <span className="font-mono">{item.barcode}</span>
                 </div>
               )}
               {item.category && (
                 <div className="flex items-center gap-2">
                   <Tag size={14} className="text-gray-400" />
-                  <span className="font-medium">Category:</span>
+                  <span className="font-medium">{t('categoryLabel')}</span>
                   <span>{item.category.name}</span>
                 </div>
               )}
               {item.location && (
                 <div className="flex items-center gap-2">
                   <MapPin size={14} className="text-gray-400" />
-                  <span className="font-medium">Location:</span>
+                  <span className="font-medium">{t('locationLabel')}</span>
                   <span>{item.location.name}</span>
                 </div>
               )}
@@ -211,21 +215,21 @@ export default function ItemDetailPage({ params }: { params: Promise<{ id: strin
             size="sm"
             onClick={() => setStockModal({ open: true, type: 'IN' })}
           >
-            Stock In
+            {t('stockIn')}
           </Button>
           <Button
             variant="secondary"
             size="sm"
             onClick={() => setStockModal({ open: true, type: 'OUT' })}
           >
-            Stock Out
+            {t('stockOut')}
           </Button>
           <Button
             variant="secondary"
             size="sm"
             onClick={() => setCheckoutModal(true)}
           >
-            Check Out
+            {t('checkOut')}
           </Button>
         </div>
       )}
@@ -233,7 +237,7 @@ export default function ItemDetailPage({ params }: { params: Promise<{ id: strin
       {activeCheckouts.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>Active Checkouts ({activeCheckouts.length})</CardTitle>
+            <CardTitle>{t('activeCheckouts', { count: activeCheckouts.length })}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
@@ -246,7 +250,7 @@ export default function ItemDetailPage({ params }: { params: Promise<{ id: strin
                     <p className="text-sm font-medium text-gray-900">{co.user.name}</p>
                     <p className="text-xs text-gray-500">
                       {co.quantity} {item.unit} · {formatDate(co.checkedOutAt)}
-                      {co.dueDate ? ` · Due: ${formatDate(co.dueDate)}` : ''}
+                      {co.dueDate ? ` · ${t('dueShort', { date: formatDate(co.dueDate) })}` : ''}
                     </p>
                   </div>
                   {canEdit && (
@@ -256,7 +260,7 @@ export default function ItemDetailPage({ params }: { params: Promise<{ id: strin
                       disabled={returningId === co.id}
                       onClick={() => handleReturn(co.id)}
                     >
-                      {returningId === co.id ? '...' : 'Return'}
+                      {returningId === co.id ? t('returningShort') : t('returnButton')}
                     </Button>
                   )}
                 </div>
@@ -268,11 +272,11 @@ export default function ItemDetailPage({ params }: { params: Promise<{ id: strin
 
       <Card>
         <CardHeader>
-          <CardTitle>Transaction History</CardTitle>
+          <CardTitle>{t('transactionHistory')}</CardTitle>
         </CardHeader>
         <CardContent>
           {transactions.length === 0 ? (
-            <p className="py-4 text-center text-sm text-gray-400">No transactions yet</p>
+            <p className="py-4 text-center text-sm text-gray-400">{t('noTransactions')}</p>
           ) : (
             <div className="divide-y divide-gray-100">
               {transactions.map((tx) => (

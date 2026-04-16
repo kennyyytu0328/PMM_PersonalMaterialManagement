@@ -3,11 +3,13 @@
 import { useState } from 'react'
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 
 export default function LoginPage() {
   const router = useRouter()
+  const t = useTranslations('login')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -27,7 +29,7 @@ export default function LoginPage() {
     setLoading(false)
 
     if (result?.error) {
-      setError('Invalid email or password')
+      setError(t('invalidCredentials'))
     } else {
       router.push('/dashboard')
       router.refresh()
@@ -38,7 +40,7 @@ export default function LoginPage() {
     <div className="w-full max-w-sm">
       <div className="mb-8 text-center">
         <h1 className="text-2xl font-bold text-gray-900">PMM</h1>
-        <p className="mt-1 text-sm text-gray-500">Personal Material Management</p>
+        <p className="mt-1 text-sm text-gray-500">{t('subtitle')}</p>
       </div>
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
@@ -46,24 +48,24 @@ export default function LoginPage() {
         )}
         <Input
           id="email"
-          label="Email"
+          label={t('emailLabel')}
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="you@example.com"
+          placeholder={t('emailPlaceholder')}
           required
         />
         <Input
           id="password"
-          label="Password"
+          label={t('passwordLabel')}
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="Enter your password"
+          placeholder={t('passwordPlaceholder')}
           required
         />
         <Button type="submit" className="w-full" size="lg" disabled={loading}>
-          {loading ? 'Signing in...' : 'Sign In'}
+          {loading ? t('signingIn') : t('signIn')}
         </Button>
       </form>
     </div>

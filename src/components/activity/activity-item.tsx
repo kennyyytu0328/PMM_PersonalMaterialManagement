@@ -1,3 +1,6 @@
+'use client'
+
+import { useTranslations } from 'next-intl'
 import { cn, formatDate } from '@/lib/utils'
 import { ArrowDown, ArrowUp, Settings, ArrowUpRight, RotateCcw } from 'lucide-react'
 
@@ -13,41 +16,37 @@ interface ActivityItemProps {
 
 const typeConfig: Record<
   TransactionType,
-  { icon: React.ReactNode; color: string; label: string; prefix: string }
+  { icon: React.ReactNode; color: string; prefix: string }
 > = {
   IN: {
     icon: <ArrowDown size={16} />,
     color: 'text-green-600 bg-green-100',
-    label: 'Stock In',
     prefix: '+',
   },
   OUT: {
     icon: <ArrowUp size={16} />,
     color: 'text-red-600 bg-red-100',
-    label: 'Stock Out',
     prefix: '-',
   },
   ADJUST: {
     icon: <Settings size={16} />,
     color: 'text-yellow-600 bg-yellow-100',
-    label: 'Adjust',
     prefix: '',
   },
   CHECKOUT: {
     icon: <ArrowUpRight size={16} />,
     color: 'text-blue-600 bg-blue-100',
-    label: 'Checkout',
     prefix: '-',
   },
   RETURN: {
     icon: <RotateCcw size={16} />,
     color: 'text-purple-600 bg-purple-100',
-    label: 'Return',
     prefix: '+',
   },
 }
 
 export function ActivityItem({ itemName, type, quantity, timestamp, performedBy }: ActivityItemProps) {
+  const t = useTranslations('activity.types')
   const config = typeConfig[type]
 
   return (
@@ -58,7 +57,7 @@ export function ActivityItem({ itemName, type, quantity, timestamp, performedBy 
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-medium text-gray-900">{itemName}</p>
         <p className="text-xs text-gray-500">
-          {config.label}
+          {t(type)}
           {performedBy ? ` · ${performedBy}` : ''}
           {' · '}
           {formatDate(timestamp)}

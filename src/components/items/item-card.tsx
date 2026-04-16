@@ -1,4 +1,7 @@
+'use client'
+
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { Badge } from '@/components/ui/badge'
 import { Package } from 'lucide-react'
 
@@ -23,6 +26,7 @@ export function ItemCard({
   categoryName,
   locationName,
 }: ItemCardProps) {
+  const t = useTranslations('items')
   const isLowStock = minQuantity != null && quantity <= minQuantity
 
   return (
@@ -38,12 +42,12 @@ export function ItemCard({
           <p className="truncate text-sm font-medium text-gray-900">{name}</p>
           {isLowStock && (
             <Badge variant="warning" className="flex-shrink-0">
-              Low
+              {t('lowBadge')}
             </Badge>
           )}
         </div>
         <p className="mt-0.5 text-xs text-gray-400">
-          SKU: {sku}
+          {t('skuLabel')}: {sku}
           {categoryName ? ` · ${categoryName}` : ''}
           {locationName ? ` · ${locationName}` : ''}
         </p>

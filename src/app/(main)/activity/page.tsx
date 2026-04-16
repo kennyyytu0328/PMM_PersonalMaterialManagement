@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { Activity } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Loading } from '@/components/ui/loading'
 import { EmptyState } from '@/components/ui/empty-state'
@@ -41,26 +42,23 @@ const TYPE_VARIANT: Record<string, 'success' | 'danger' | 'info'> = {
   ADJUST: 'info',
 }
 
-const TYPE_LABEL: Record<string, string> = {
-  IN: 'Stock In',
-  OUT: 'Stock Out',
-  ADJUST: 'Adjusted',
-}
-
 function TransactionRow({ tx }: { tx: TransactionItem }) {
+  const t = useTranslations('activity')
+  const tTypes = useTranslations('activity.types')
+
   return (
     <div className="flex items-start gap-3 rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
       <Badge variant={TYPE_VARIANT[tx.type]} className="mt-0.5 shrink-0">
-        {TYPE_LABEL[tx.type]}
+        {tTypes(tx.type)}
       </Badge>
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-medium text-gray-900">
-          {tx.item?.name ?? 'Unknown Item'}
+          {tx.item?.name ?? t('unknownItem')}
         </p>
         <p className="text-xs text-gray-400">{tx.item?.sku}</p>
         {tx.note && <p className="mt-0.5 text-xs text-gray-500">{tx.note}</p>}
         <p className="mt-1 text-xs text-gray-400">
-          By {tx.performer?.name ?? 'Unknown'} · {formatDate(tx.createdAt)}
+          {t('by')} {tx.performer?.name ?? t('unknownPerformer')} · {formatDate(tx.createdAt)}
         </p>
       </div>
       <span
@@ -80,6 +78,7 @@ function TransactionRow({ tx }: { tx: TransactionItem }) {
 }
 
 export default function ActivityPage() {
+  const t = useTranslations('activity')
   const [transactions, setTransactions] = useState<TransactionItem[]>([])
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(false)
@@ -117,15 +116,15 @@ export default function ActivityPage() {
 
   return (
     <div className="px-4 py-4">
-      <h1 className="mb-4 text-lg font-bold text-gray-900">Activity</h1>
+      <h1 className="mb-4 text-lg font-bold text-gray-900">{t('title')}</h1>
 
       {loading ? (
         <Loading />
       ) : transactions.length === 0 ? (
         <EmptyState
           icon={<Activity size={40} />}
-          title="No transactions yet"
-          description="Stock movements will appear here once you start tracking inventory."
+          title={t('noTransactions')}
+          description={t('noTransactionsDesc')}
         />
       ) : (
         <div className="flex flex-col gap-3">
@@ -140,7 +139,7 @@ export default function ActivityPage() {
               onClick={handleLoadMore}
               disabled={loadingMore}
             >
-              {loadingMore ? 'Loading…' : 'Load More'}
+              {loadingMore ? t('loadingMore') : t('loadMore')}
             </Button>
           )}
         </div>

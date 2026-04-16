@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { Modal } from '@/components/ui/modal'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -23,6 +24,8 @@ interface CheckoutModalProps {
 
 export function CheckoutModal({ open, onClose, itemId, itemName, onSuccess }: CheckoutModalProps) {
   const { toast } = useToast()
+  const t = useTranslations('checkoutModal')
+  const tCommon = useTranslations('common')
   const [users, setUsers] = useState<User[]>([])
   const [userId, setUserId] = useState('')
   const [quantity, setQuantity] = useState('1')
@@ -57,12 +60,12 @@ export function CheckoutModal({ open, onClose, itemId, itemName, onSuccess }: Ch
 
     const qty = parseInt(quantity)
     if (!qty || qty <= 0) {
-      toast('Please enter a valid quantity', 'error')
+      toast(t('invalidQuantity'), 'error')
       return
     }
 
     if (!userId) {
-      toast('Please select a user', 'error')
+      toast(t('noUserSelected'), 'error')
       return
     }
 
@@ -83,11 +86,11 @@ export function CheckoutModal({ open, onClose, itemId, itemName, onSuccess }: Ch
       const json = await res.json()
 
       if (!json.success) {
-        toast(json.error ?? 'Failed to create checkout', 'error')
+        toast(json.error ?? t('failedMessage'), 'error')
         return
       }
 
-      toast('Item checked out successfully', 'success')
+      toast(t('successMessage'), 'success')
       setUserId('')
       setQuantity('1')
       setDueDate('')
@@ -95,7 +98,7 @@ export function CheckoutModal({ open, onClose, itemId, itemName, onSuccess }: Ch
       onSuccess()
       onClose()
     } catch {
-      toast('Something went wrong', 'error')
+      toast(tCommon('somethingWentWrong'), 'error')
     } finally {
       setSubmitting(false)
     }
@@ -104,21 +107,21 @@ export function CheckoutModal({ open, onClose, itemId, itemName, onSuccess }: Ch
   const userOptions = users.map((u) => ({ value: u.id, label: `${u.name} (${u.email})` }))
 
   return (
-    <Modal open={open} onClose={onClose} title="Check Out Item">
+    <Modal open={open} onClose={onClose} title={t('title')}>
       <p className="mb-4 text-sm text-gray-500">{itemName}</p>
       <form onSubmit={handleSubmit} className="space-y-4">
         <Select
           id="userId"
-          label="Assign To"
+          label={t('assignToLabel')}
           options={userOptions}
-          placeholder={loadingUsers ? 'Loading users...' : 'Select a user'}
+          placeholder={loadingUsers ? t('loadingUsers') : t('selectUserPlaceholder')}
           value={userId}
           onChange={(e) => setUserId(e.target.value)}
           required
         />
         <Input
           id="quantity"
-          label="Quantity"
+          label={t('quantityLabel')}
           type="number"
           min="1"
           value={quantity}
@@ -127,25 +130,25 @@ export function CheckoutModal({ open, onClose, itemId, itemName, onSuccess }: Ch
         />
         <Input
           id="dueDate"
-          label="Due Date (optional)"
+          label={t('dueDateLabel')}
           type="date"
           value={dueDate}
           onChange={(e) => setDueDate(e.target.value)}
         />
         <Input
           id="note"
-          label="Note (optional)"
+          label={t('noteLabel')}
           type="text"
           value={note}
           onChange={(e) => setNote(e.target.value)}
-          placeholder="Add a note..."
+          placeholder={t('notePlaceholder')}
         />
         <div className="flex gap-2 pt-2">
           <Button type="button" variant="secondary" className="flex-1" onClick={onClose}>
-            Cancel
+            {tCommon('cancel')}
           </Button>
           <Button type="submit" className="flex-1" disabled={submitting || loadingUsers}>
-            {submitting ? 'Processing...' : 'Check Out'}
+            {submitting ? t('processing') : t('submit')}
           </Button>
         </div>
       </form>

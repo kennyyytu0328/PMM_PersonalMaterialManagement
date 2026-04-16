@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { Tag, Plus, Pencil, Trash2 } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Modal } from '@/components/ui/modal'
@@ -26,6 +27,8 @@ const EMPTY_FORM: FormState = { name: '', description: '' }
 
 export default function CategoriesPage() {
   const { toast } = useToast()
+  const t = useTranslations('categories')
+  const tCommon = useTranslations('common')
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
   const [modalOpen, setModalOpen] = useState(false)
@@ -39,11 +42,11 @@ export default function CategoriesPage() {
       const json = await res.json()
       if (json.success) setCategories(json.data)
     } catch {
-      toast('Failed to load categories', 'error')
+      toast(t('loadFailed'), 'error')
     } finally {
       setLoading(false)
     }
-  }, [toast])
+  }, [toast, t])
 
   useEffect(() => {
     fetchCategories()
@@ -69,7 +72,7 @@ export default function CategoriesPage() {
 
   const handleSave = async () => {
     if (!form.name.trim()) {
-      toast('Name is required', 'error')
+      toast(t('nameRequired'), 'error')
       return
     }
 
@@ -87,42 +90,42 @@ export default function CategoriesPage() {
       })
       const json = await res.json()
       if (json.success) {
-        toast(editing ? 'Category updated' : 'Category created', 'success')
+        toast(editing ? t('updated') : t('created'), 'success')
         closeModal()
         await fetchCategories()
       } else {
-        toast(json.error ?? 'Failed to save', 'error')
+        toast(json.error ?? t('saveFailed'), 'error')
       }
     } catch {
-      toast('Failed to save category', 'error')
+      toast(t('saveFailed'), 'error')
     } finally {
       setSaving(false)
     }
   }
 
   const handleDelete = async (cat: Category) => {
-    if (!confirm(`Delete category "${cat.name}"? This cannot be undone.`)) return
+    if (!confirm(t('confirmDelete', { name: cat.name }))) return
     try {
       const res = await fetch(`/api/categories/${cat.id}`, { method: 'DELETE' })
       const json = await res.json()
       if (json.success) {
-        toast('Category deleted', 'success')
+        toast(t('deleted'), 'success')
         await fetchCategories()
       } else {
-        toast(json.error ?? 'Failed to delete', 'error')
+        toast(json.error ?? t('deleteFailed'), 'error')
       }
     } catch {
-      toast('Failed to delete category', 'error')
+      toast(t('deleteFailed'), 'error')
     }
   }
 
   return (
     <div className="px-4 py-4">
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-lg font-bold text-gray-900">Categories</h1>
+        <h1 className="text-lg font-bold text-gray-900">{t('title')}</h1>
         <Button size="sm" onClick={openAdd}>
           <Plus size={16} className="mr-1" />
-          Add
+          {t('add')}
         </Button>
       </div>
 
@@ -131,11 +134,11 @@ export default function CategoriesPage() {
       ) : categories.length === 0 ? (
         <EmptyState
           icon={<Tag size={40} />}
-          title="No categories"
-          description="Create categories to organise your inventory items."
+          title={t('noCategories')}
+          description={t('noCategoriesDesc')}
           action={
             <Button size="sm" onClick={openAdd}>
-              Add Category
+              {t('addCategory')}
             </Button>
           }
         />
@@ -177,29 +180,29 @@ export default function CategoriesPage() {
       <Modal
         open={modalOpen}
         onClose={closeModal}
-        title={editing ? 'Edit Category' : 'Add Category'}
+        title={editing ? t('modalEdit') : t('modalAdd')}
       >
         <div className="space-y-4">
           <Input
             id="cat-name"
-            label="Name"
-            placeholder="e.g. Electronics"
+            label={t('nameLabel')}
+            placeholder={t('namePlaceholder')}
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
           />
           <Input
             id="cat-desc"
-            label="Description (optional)"
-            placeholder="Short description"
+            label={t('descriptionLabel')}
+            placeholder={t('descriptionPlaceholder')}
             value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
           />
           <div className="flex gap-2 pt-2">
             <Button variant="secondary" className="flex-1" onClick={closeModal}>
-              Cancel
+              {tCommon('cancel')}
             </Button>
             <Button className="flex-1" onClick={handleSave} disabled={saving}>
-              {saving ? 'Saving…' : editing ? 'Update' : 'Create'}
+              {saving ? tCommon('saving') : editing ? t('update') : tCommon('create')}
             </Button>
           </div>
         </div>
