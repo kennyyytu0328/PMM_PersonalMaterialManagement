@@ -10,6 +10,8 @@ A mobile-first web application for tracking personal inventory, materials, and e
 - **Checkout System** — Check out items to users with due dates and return tracking
 - **Reports & Analytics** — Summary stats, stock movement charts, low-stock alerts, category/location breakdowns
 - **Admin Panel** — Manage users, categories, and locations with role-based access control
+- **Self-Service Profile** — Users can change their own password; admins can reset any user's password
+- **Internationalization** — Full UI support for English and 繁體中文 (Traditional Chinese) via cookie-based locale
 - **Mobile-First UI** — Bottom navigation, responsive design, works great on phones and tablets
 - **Docker Ready** — One-command deployment with auto-migration and seeding
 
@@ -31,6 +33,7 @@ A mobile-first web application for tracking personal inventory, materials, and e
 | Icons | [Lucide React](https://lucide.dev/) |
 | Charts | [Recharts](https://recharts.org/) |
 | Scanner | [html5-qrcode](https://github.com/niceDev0908/html5-qrcode) |
+| i18n | [next-intl](https://next-intl.dev/) (cookie-based, en + zh-TW) |
 | Testing | [Vitest](https://vitest.dev/) + Testing Library |
 
 ## Getting Started
@@ -109,17 +112,23 @@ src/
 │   │   ├── scan/              # Barcode scanner
 │   │   ├── activity/          # Transaction log
 │   │   ├── reports/           # Analytics
-│   │   └── admin/             # User, category & location management
+│   │   ├── admin/             # User, category & location management
+│   │   └── profile/           # Self-service profile & password change
 │   └── api/                   # REST API routes
 ├── components/
 │   ├── ui/                    # Reusable UI components
-│   ├── layout/                # Header, BottomNav
+│   ├── layout/                # Header, BottomNav, LanguageSwitcher
 │   └── ...                    # Feature-specific components
 ├── db/
 │   ├── schema.ts              # Database schema (Drizzle)
 │   └── migrations/            # Generated SQL migrations
-├── lib/                       # Auth, validation, utilities
+├── i18n/                      # next-intl config + request handler
+├── lib/                       # Auth, validation, utilities, server actions
 └── types/                     # TypeScript type augmentations
+
+messages/
+├── en.json                    # English translations
+└── zh-TW.json                 # Traditional Chinese translations
 ```
 
 ## Database Schema
@@ -150,6 +159,11 @@ items          1──N  checkouts
 | `DATABASE_URL` | SQLite database path | `file:./data/pmm.db` |
 | `NEXTAUTH_SECRET` | JWT signing secret (required) | — |
 | `NEXTAUTH_URL` | Application URL | `http://localhost:3000` |
+
+## Documentation
+
+- [Manual Testing Guide](docs/manual-testing.md) — Step-by-step verification for every feature
+- [Tech Stack & Testing](docs/tech-stack-and-testing.md) — Stack details and Docker testing checklist
 
 ## License
 
