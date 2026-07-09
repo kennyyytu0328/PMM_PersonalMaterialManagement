@@ -104,6 +104,8 @@ Client JS apiFetch('/api/items') → /gogoffcc-pmm/api/items → same strip → 
 NextAuth signIn → /gogoffcc-pmm/api/auth/callback/credentials → strip → /api/auth/...
 ```
 
+**Implementation correction (Task 10):** the strip claims above were disproven during end-to-end verification. Next.js 16.2.1's standalone server serves routes and assets **under** the `basePath` prefix — `curl 127.0.0.1:3001/gogoffcc-pmm/login` → 200, `curl 127.0.0.1:3001/login` → 404 (empirically verified, not stripped). Host nginx must therefore **preserve** the prefix (`proxy_pass http://127.0.0.1:3001;` with no trailing slash/URI part), not strip it. Auth.js also does not infer its action-parsing `basePath` from `AUTH_URL` alone — `authConfig.basePath` must be set explicitly (see `src/lib/auth.config.ts`) or every `/api/auth/*` call 400s with `UnknownAction`. `docs/PRODUCTION_DEPLOYMENT_GUIDE.md` has been corrected accordingly; treat this section's diagram/prose above as historical context, not current guidance.
+
 ## Testing
 
 - Unit: `apiFetch` prefix behavior (with/without env); seed script flag logic (admin-only vs full).

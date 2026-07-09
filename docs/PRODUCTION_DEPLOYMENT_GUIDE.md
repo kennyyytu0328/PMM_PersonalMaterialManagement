@@ -15,7 +15,7 @@ PMM (Personal Material Management) — step-by-step guide for deploying to the s
 │   ↓                                                                │
 │ Our server (Ubuntu)                                                │
 │   ├─ host nginx :80                                                │
-│   │     └─ /gogoffcc-pmm/  → 127.0.0.1:3001/  (strip)             │
+│   │     └─ /gogoffcc-pmm/  → 127.0.0.1:3001  (preserve prefix)    │
 │   └─ docker compose -f docker-compose.prod.yml                    │
 │         └─ pmm  (Next.js 16, 127.0.0.1:3001 → container :3000)    │
 │               data: SQLite file in the `pmm-data` named volume    │
@@ -27,7 +27,7 @@ PMM (Personal Material Management) — step-by-step guide for deploying to the s
 1. **TLS terminates upstream**, not on our server. Our container speaks plain HTTP on the internal network. The browser only ever sees `https://www.gogoffcc.com`, never our IP.
 2. **We do not own the public domain.** The auth endpoint (`AUTH_URL`) is pinned to the upstream's host, `www.gogoffcc.com`.
 3. **Sub-path deployment.** The app lives at `https://www.gogoffcc.com/gogoffcc-pmm`. Next.js's `basePath` is baked in at build time via the `NEXT_PUBLIC_BASE_PATH` build arg.
-4. **One nginx layer on our side, one location block.** Unlike a split frontend/API deployment, PMM's Next.js API routes ARE the backend — there is no separate API process or port. Upstream nginx (colleague) terminates TLS and forwards `/gogoffcc-pmm/*` to our server's port 80. Our **host nginx** holds a single location block that strips the `/gogoffcc-pmm` prefix and proxies into the one Docker container on `127.0.0.1:3001`.
+4. **One nginx layer on our side, one location block.** Unlike a split frontend/API deployment, PMM's Next.js API routes ARE the backend — there is no separate API process or port. Upstream nginx (colleague) terminates TLS and forwards `/gogoffcc-pmm/*` to our server's port 80. Our **host nginx** holds a single location block that **preserves** the `/gogoffcc-pmm` prefix and proxies into the one Docker container on `127.0.0.1:3001` (Next.js 16.2.1 standalone serves routes and assets *with* the basePath prefix — see the note in §6).
 5. **Coordination is minimal.** The upstream colleague just adds `/gogoffcc-pmm/*` → `<our-server>:80`, mirroring the existing `/gogoffcc-pms/` rule. All the path-rewriting logic lives in our host nginx, where we own it.
 6. **The container port binds to `127.0.0.1` only**, never `0.0.0.0` — host nginx is the only thing that can reach it.
 7. **SQLite runs inside the container**, not as a separate service. There is no `db` container and no database server to provision — the database is a single file (`/app/data/pmm.db`) inside the `pmm-data` Docker volume. This means the go-live steps in this guide skip several things a Postgres/MySQL-backed app would need: no database credentials to generate, no network policy between services, no separate backup tool to install (see §10 for the SQLite-specific approach).
@@ -186,7 +186,7 @@ Append the following inside the existing `server { ... }` block in `/etc/nginx/s
 location = /gogoffcc-pmm { return 301 /gogoffcc-pmm/; }
 
 location /gogoffcc-pmm/ {
-    proxy_pass         http://127.0.0.1:3001/;   # trailing slash strips the prefix
+    proxy_pass         http://127.0.0.1:3001;    # NO trailing slash/URI — preserves the /gogoffcc-pmm prefix
     proxy_http_version 1.1;
     proxy_set_header   Host              $host;
     proxy_set_header   X-Real-IP         $remote_addr;
@@ -207,7 +207,7 @@ sudo nginx -t
 sudo systemctl reload nginx
 ```
 
-> **Next.js 16 basePath note — why this block strips the prefix.** In Next.js ≤15, `basePath` made the server *require* the prefix on incoming requests, so the proxy had to preserve it. **Next.js 16 changed this**: `basePath` only affects URL/asset *generation* in the bundle; the server still serves routes at unprefixed paths (`/login`, `/dashboard`, `/_next/...`). Verified empirically: `curl 127.0.0.1:3001/login` → 200, `curl 127.0.0.1:3001/gogoffcc-pmm/login` → 404. So the host nginx must strip the prefix — the trailing-slash `proxy_pass` form does that. The browser-side URLs still all carry `/gogoffcc-pmm` because the prefix is baked into the generated HTML/JS by the `NEXT_PUBLIC_BASE_PATH` build arg.
+> **Next.js 16 basePath note — verified behavior (why this block preserves the prefix).** The standalone server in Next.js 16.2.1 serves routes and static assets **under** the `basePath` prefix, not at unprefixed paths — the reverse of what an earlier note in this guide (based on a different project) claimed. Verified empirically against the built standalone image during Task 10 verification: `curl 127.0.0.1:3001/gogoffcc-pmm/login` → 200, `curl 127.0.0.1:3001/login` → 404. So the host nginx location block must **preserve** the prefix when proxying — `proxy_pass http://127.0.0.1:3001;` with **no trailing slash and no URI part** does that (a trailing-slash `proxy_pass http://127.0.0.1:3001/;` would strip the prefix and 404 every route). The browser-side URLs also carry `/gogoffcc-pmm` because the prefix is baked into the generated HTML/JS by the `NEXT_PUBLIC_BASE_PATH` build arg — both the server routing and the generated asset URLs agree on the same prefixed scheme.
 
 ---
 
@@ -226,13 +226,14 @@ No strip/preserve split is needed at the upstream layer because our host nginx d
 Once the host nginx reload succeeds, prove the host-nginx → container path works without waiting on the upstream:
 
 ```bash
-curl -I  http://127.0.0.1:3001/login                                  # direct: 200 (unprefixed)
-curl -s  http://127.0.0.1:3001/login | grep -o 'gogoffcc-pmm' | head -1   # assets carry prefix
+curl -I  http://127.0.0.1:3001/gogoffcc-pmm/login                     # direct, prefixed: 200
+curl -I  http://127.0.0.1:3001/login                                  # direct, unprefixed: 404 (EXPECTED — see §6 note)
+curl -s  http://127.0.0.1:3001/gogoffcc-pmm/login | grep -o 'gogoffcc-pmm' | head -1   # assets carry prefix
 curl -I -H 'Host: www.gogoffcc.com' -H 'X-Forwarded-Proto: https' \
      http://127.0.0.1/gogoffcc-pmm/login                              # through host nginx: 200
 ```
 
-If all three succeed, host nginx + container are wired correctly. Only the upstream-colleague step (§7) remains before the public URL works.
+The unprefixed direct-container request returning 404 is expected (see the Next.js 16 basePath note in §6) — the standalone server only serves routes under the `/gogoffcc-pmm` prefix. If all of the above match, host nginx + container are wired correctly. Only the upstream-colleague step (§7) remains before the public URL works.
 
 ---
 
@@ -344,7 +345,7 @@ Migrations are forward-only. If the release you're rolling back from contained a
 - [ ] Port `3001` (or the `PMM_HOST_PORT` you chose) is free, per the check in §2
 - [ ] `SEED_SAMPLE_DATA=false` confirmed via the boot logs (`Admin user only.` line, not the sample categories/items log)
 - [ ] Admin password changed away from the bootstrap value after first login
-- [ ] Host nginx strip rule is live (`sudo nginx -t` passed, reloaded) and the upstream operator has added the `/gogoffcc-pmm/` forward rule
+- [ ] Host nginx prefix-preserving rule is live (`sudo nginx -t` passed, reloaded) and the upstream operator has added the `/gogoffcc-pmm/` forward rule
 - [ ] Public smoke-test matrix (§9) is green, including the camera check on a real HTTPS URL
 - [ ] Backup cron (§10) is installed and at least one run has been verified
 - [ ] `docker compose ps` shows the `pmm` service healthy after a reboot (`restart: unless-stopped` is already set in the compose file)
@@ -357,10 +358,10 @@ Migrations are forward-only. If the release you're rolling back from contained a
 | Symptom | Likely cause | Fix |
 |---|---|---|
 | Assets 404 under the prefix (`<PREFIX>/_next/...` returns 404) | `NEXT_PUBLIC_BASE_PATH` build arg missing or wrong at image build time | Confirm `docker-compose.prod.yml` sets `NEXT_PUBLIC_BASE_PATH: /gogoffcc-pmm` under `build.args`, then rebuild: `up -d --build` |
-| Redirect lands on `/login` without the prefix | Host nginx proxy fix (trailing-slash strip) missing, or an old image without the `basePath`-aware redirect logic is still running | Confirm the `location /gogoffcc-pmm/` block uses `proxy_pass http://127.0.0.1:3001/;` (trailing slash); rebuild the image if it predates the base-path-aware `proxy.ts` redirects |
+| Redirect lands on `/login` without the prefix | An old image predating the `basePath`-aware redirect logic is still running | Rebuild the image (`up -d --build`) so it includes the base-path-aware `proxy.ts` redirects |
 | Auth error mentioning `UntrustedHost` | `trustHost` not honored, or `AUTH_URL` wrong | `auth.config.ts` sets `trustHost: true` — confirm the running image is current; check `AUTH_URL` in `.env` matches `https://www.gogoffcc.com/gogoffcc-pmm/api/auth` exactly |
 | Login loop (form submits, lands back on login) | `AUTH_URL` path does not match the actual deployed prefix | Fix `AUTH_URL` in `.env`, `docker compose -f docker-compose.prod.yml up -d` (no rebuild needed — this is a runtime env var, not a build arg) |
-| `<PREFIX>/api/...` returns 404 through the upstream but 200 when hit directly on `127.0.0.1:3001` | Host nginx strip rule (trailing slash on `proxy_pass`) missing from the single location block | Confirm `proxy_pass http://127.0.0.1:3001/;` has the trailing slash; `sudo nginx -t && sudo systemctl reload nginx` |
+| `<PREFIX>/...` (pages, assets, or API) 404s through the upstream or through host nginx, but 200 when hit directly on `127.0.0.1:3001<PREFIX>/...` | `proxy_pass` in the `location /gogoffcc-pmm/` block has a trailing slash / URI part, which **strips** the prefix — but the Next.js 16.2.1 standalone server requires the prefix to be preserved (see §6 note) | Confirm `proxy_pass http://127.0.0.1:3001;` has **no** trailing slash and no URI part; `sudo nginx -t && sudo systemctl reload nginx` |
 | Barcode scanner camera never activates | Not on an HTTPS origin | Confirm the browser URL bar shows `https://www.gogoffcc.com/...`, not `http://`; camera access requires a secure origin and silently fails otherwise |
 | Sample items (Electronics, Warehouse A, etc.) appear in production | `SEED_SAMPLE_DATA` was unset (defaults to seeding samples) the first time the container ever started against this volume | The volume is already seeded — `seed.mjs` is a no-op on subsequent starts even after fixing the env var. Clean up the sample rows via the admin UI, or (if no real data exists yet) `docker compose -f docker-compose.prod.yml down -v` to reset the volume and restart with `SEED_SAMPLE_DATA=false` correctly set (already the compose default — check for a stray `.env` override) |
 
