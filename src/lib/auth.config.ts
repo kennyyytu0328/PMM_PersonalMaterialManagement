@@ -29,4 +29,7 @@ export const authConfig: NextAuthConfig = {
     strategy: 'jwt',
   },
   secret: process.env.NEXTAUTH_SECRET ?? process.env.AUTH_SECRET,
+  // Required behind the TLS-terminating upstream proxy: trust
+  // X-Forwarded-Host / X-Forwarded-Proto from host nginx.
+  trustHost: true,
 }
