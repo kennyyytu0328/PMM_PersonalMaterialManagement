@@ -181,6 +181,10 @@ Append the following inside the existing `server { ... }` block in `/etc/nginx/s
 
 ```nginx
 # === PMM (Personal Material Management) — served at /gogoffcc-pmm/ ===
+
+# Bare prefix (no trailing slash) would otherwise 404 — redirect it:
+location = /gogoffcc-pmm { return 301 /gogoffcc-pmm/; }
+
 location /gogoffcc-pmm/ {
     proxy_pass         http://127.0.0.1:3001/;   # trailing slash strips the prefix
     proxy_http_version 1.1;
@@ -250,15 +254,18 @@ Run this once after the upstream operator has reloaded their proxy, before annou
 
 ## 10. Backups
 
-The SQLite database (`/app/data/pmm.db` inside the `pmm-data` volume) is the only stateful piece for this app. It runs in WAL mode, so a raw file copy of a live database is **not** crash-consistent — you can copy a torn write mid-transaction. There is also no `sqlite3` CLI in the production image (the `node:20-alpine` runtime image only carries what the app needs at runtime). Instead, use better-sqlite3's own online backup API, invoked as a one-liner inside the container:
+The SQLite database (`/app/data/pmm.db` inside the `pmm-data` volume) is the only stateful piece for this app. It runs in WAL mode, so a raw file copy of a live database is **not** crash-consistent — you can copy a torn write mid-transaction. There is also no `sqlite3` CLI in the production image (the `node:20-alpine` runtime image only carries what the app needs at runtime). Instead, use better-sqlite3's own online backup API, invoked as a one-liner inside the container.
+
+Install the following as `/etc/cron.daily/pmm-backup` (the shebang must stay on line 1):
 
 ```bash
-# /etc/cron.daily/pmm-backup
 #!/bin/bash
 set -e
 BACKUP_DIR=/var/backups/pmm
 mkdir -p "$BACKUP_DIR"
-cd ~/personal-material-management
+# cron.daily scripts run as root with HOME=/root, so `~` would NOT resolve to
+# the deploy user's home. Use the absolute clone path (see the path note in §1):
+cd /home/<deploy-user>/personal-material-management   # ← adjust to your actual clone path
 docker compose -f docker-compose.prod.yml exec -T pmm \
     node -e "const db=require('better-sqlite3')('/app/data/pmm.db');db.backup('/app/data/backup.db').then(()=>{db.close()})"
 docker compose -f docker-compose.prod.yml cp pmm:/app/data/backup.db "$BACKUP_DIR/pmm-$(date +%F).db"
@@ -277,6 +284,8 @@ sudo /etc/cron.daily/pmm-backup && ls -la /var/backups/pmm/
 
 **Restore**: stop the stack, replace `/app/data/pmm.db` inside the `pmm-data` volume with the decompressed backup file, then start the stack again. The entrypoint re-runs migrations and seeding on the next start, but both are no-ops against a restored database that already has tables and users, so this is safe.
 
+> **Delete the WAL sidecar files as part of the restore.** The old database's `pmm.db-wal` / `pmm.db-shm` files remain in the volume after you overwrite `pmm.db`, and on next open SQLite would replay that stale WAL **onto the restored file**, corrupting it. The restore command below removes them before copying the backup in.
+
 ```bash
 docker compose -f docker-compose.prod.yml down
 gunzip -c /var/backups/pmm/pmm-<date>.db.gz > /tmp/pmm-restore.db
@@ -286,7 +295,7 @@ gunzip -c /var/backups/pmm/pmm-<date>.db.gz > /tmp/pmm-restore.db
 docker volume ls | grep pmm-data
 
 docker run --rm -v <volume-name-from-above>:/data -v /tmp:/restore alpine \
-    cp /restore/pmm-restore.db /data/pmm.db
+    sh -c 'rm -f /data/pmm.db-wal /data/pmm.db-shm && cp /restore/pmm-restore.db /data/pmm.db'
 docker compose -f docker-compose.prod.yml up -d
 ```
 
