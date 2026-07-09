@@ -10,6 +10,8 @@ RUN corepack enable pnpm && pnpm install --frozen-lockfile
 # Build
 FROM base AS builder
 WORKDIR /app
+ARG NEXT_PUBLIC_BASE_PATH=
+ENV NEXT_PUBLIC_BASE_PATH=$NEXT_PUBLIC_BASE_PATH
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN corepack enable pnpm && pnpm db:generate && pnpm build
@@ -18,6 +20,8 @@ RUN corepack enable pnpm && pnpm db:generate && pnpm build
 FROM base AS runner
 WORKDIR /app
 ENV NODE_ENV=production
+# tzdata so TZ=Asia/Taipei (set in compose) takes effect on musl/alpine
+RUN apk add --no-cache tzdata
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 RUN mkdir -p /app/data /app/scripts && chown nextjs:nodejs /app/data
