@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { Loading } from '@/components/ui/loading'
 import { StockChart } from '@/components/reports/stock-chart'
 import { formatCurrency } from '@/lib/utils'
+import { apiFetch } from '@/lib/api'
 
 interface SummaryStats {
   totalItems: number
@@ -79,9 +80,9 @@ export default function ReportsPage() {
     const loadReports = async () => {
       try {
         const [summaryRes, movementsRes, lowStockRes] = await Promise.all([
-          fetch('/api/reports?type=summary'),
-          fetch('/api/reports?type=movements'),
-          fetch('/api/reports?type=low-stock'),
+          apiFetch('/api/reports?type=summary'),
+          apiFetch('/api/reports?type=movements'),
+          apiFetch('/api/reports?type=low-stock'),
         ])
 
         const [summaryJson, movementsJson, lowStockJson] = await Promise.all([

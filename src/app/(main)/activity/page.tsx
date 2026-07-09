@@ -8,6 +8,7 @@ import { Loading } from '@/components/ui/loading'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Badge } from '@/components/ui/badge'
 import { formatDate } from '@/lib/utils'
+import { apiFetch } from '@/lib/api'
 
 interface TransactionItem {
   id: number
@@ -87,7 +88,7 @@ export default function ActivityPage() {
 
   const fetchPage = useCallback(async (pageNum: number, append: boolean) => {
     try {
-      const res = await fetch(`/api/transactions?page=${pageNum}&limit=50`)
+      const res = await apiFetch(`/api/transactions?page=${pageNum}&limit=50`)
       const json: ApiResponse = await res.json()
       if (json.success) {
         setTransactions((prev) => (append ? [...prev, ...json.data] : json.data))

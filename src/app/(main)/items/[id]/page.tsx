@@ -15,6 +15,7 @@ import { CheckoutModal } from '@/components/items/checkout-modal'
 import { ActivityItem } from '@/components/activity/activity-item'
 import { useToast } from '@/components/ui/toast'
 import { formatCurrency, formatDate } from '@/lib/utils'
+import { apiFetch } from '@/lib/api'
 
 interface Item {
   id: number
@@ -77,9 +78,9 @@ export default function ItemDetailPage({ params }: { params: Promise<{ id: strin
   async function loadData() {
     try {
       const [itemRes, txRes, coRes] = await Promise.all([
-        fetch(`/api/items/${id}`),
-        fetch(`/api/transactions?itemId=${id}&limit=20`),
-        fetch(`/api/checkouts?itemId=${id}&activeOnly=true`),
+        apiFetch(`/api/items/${id}`),
+        apiFetch(`/api/transactions?itemId=${id}&limit=20`),
+        apiFetch(`/api/checkouts?itemId=${id}&activeOnly=true`),
       ])
 
       const itemJson = await itemRes.json()
@@ -108,7 +109,7 @@ export default function ItemDetailPage({ params }: { params: Promise<{ id: strin
   async function handleReturn(checkoutId: number) {
     setReturningId(checkoutId)
     try {
-      const res = await fetch(`/api/checkouts/${checkoutId}/return`, {
+      const res = await apiFetch(`/api/checkouts/${checkoutId}/return`, {
         method: 'POST',
       })
       const json = await res.json()

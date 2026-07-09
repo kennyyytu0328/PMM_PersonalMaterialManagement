@@ -11,6 +11,7 @@ import { Loading } from '@/components/ui/loading'
 import { EmptyState } from '@/components/ui/empty-state'
 import { useToast } from '@/components/ui/toast'
 import { formatDate } from '@/lib/utils'
+import { apiFetch } from '@/lib/api'
 
 interface User {
   id: number
@@ -49,7 +50,7 @@ export default function UsersPage() {
 
   const fetchUsers = useCallback(async () => {
     try {
-      const res = await fetch('/api/users')
+      const res = await apiFetch('/api/users')
       const json = await res.json()
       if (json.success) setUsers(json.data)
     } catch {
@@ -114,7 +115,7 @@ export default function UsersPage() {
         body.password = form.password
       }
 
-      const res = await fetch(url, {
+      const res = await apiFetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
@@ -137,7 +138,7 @@ export default function UsersPage() {
   const handleDelete = async (user: User) => {
     if (!confirm(t('confirmDelete', { name: user.name }))) return
     try {
-      const res = await fetch(`/api/users/${user.id}`, { method: 'DELETE' })
+      const res = await apiFetch(`/api/users/${user.id}`, { method: 'DELETE' })
       const json = await res.json()
       if (json.success) {
         toast(t('deleted'), 'success')

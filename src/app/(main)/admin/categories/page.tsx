@@ -10,6 +10,7 @@ import { Loading } from '@/components/ui/loading'
 import { EmptyState } from '@/components/ui/empty-state'
 import { useToast } from '@/components/ui/toast'
 import { formatDate } from '@/lib/utils'
+import { apiFetch } from '@/lib/api'
 
 interface Category {
   id: number
@@ -38,7 +39,7 @@ export default function CategoriesPage() {
 
   const fetchCategories = useCallback(async () => {
     try {
-      const res = await fetch('/api/categories')
+      const res = await apiFetch('/api/categories')
       const json = await res.json()
       if (json.success) setCategories(json.data)
     } catch {
@@ -80,7 +81,7 @@ export default function CategoriesPage() {
     try {
       const url = editing ? `/api/categories/${editing.id}` : '/api/categories'
       const method = editing ? 'PUT' : 'POST'
-      const res = await fetch(url, {
+      const res = await apiFetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -106,7 +107,7 @@ export default function CategoriesPage() {
   const handleDelete = async (cat: Category) => {
     if (!confirm(t('confirmDelete', { name: cat.name }))) return
     try {
-      const res = await fetch(`/api/categories/${cat.id}`, { method: 'DELETE' })
+      const res = await apiFetch(`/api/categories/${cat.id}`, { method: 'DELETE' })
       const json = await res.json()
       if (json.success) {
         toast(t('deleted'), 'success')

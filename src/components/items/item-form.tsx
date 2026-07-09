@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
 import { useToast } from '@/components/ui/toast'
+import { apiFetch } from '@/lib/api'
 
 interface Category {
   id: number
@@ -66,8 +67,8 @@ export function ItemForm({ itemId, initialData, defaultBarcode }: ItemFormProps)
     async function fetchOptions() {
       try {
         const [catRes, locRes] = await Promise.all([
-          fetch('/api/categories'),
-          fetch('/api/locations'),
+          apiFetch('/api/categories'),
+          apiFetch('/api/locations'),
         ])
         if (!catRes.ok || !locRes.ok) {
           console.error('Failed to fetch options:', catRes.status, locRes.status)
@@ -114,7 +115,7 @@ export function ItemForm({ itemId, initialData, defaultBarcode }: ItemFormProps)
       const url = itemId ? `/api/items/${itemId}` : '/api/items'
       const method = itemId ? 'PUT' : 'POST'
 
-      const res = await fetch(url, {
+      const res = await apiFetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

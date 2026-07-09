@@ -8,6 +8,7 @@ import { ActivityItem } from '@/components/activity/activity-item'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Loading } from '@/components/ui/loading'
 import { formatCurrency } from '@/lib/utils'
+import { apiFetch } from '@/lib/api'
 
 interface SummaryData {
   totalItems: number
@@ -35,8 +36,8 @@ export default function DashboardPage() {
     async function fetchData() {
       try {
         const [summaryRes, txRes] = await Promise.all([
-          fetch('/api/reports?type=summary'),
-          fetch('/api/transactions?limit=10'),
+          apiFetch('/api/reports?type=summary'),
+          apiFetch('/api/transactions?limit=10'),
         ])
 
         const summaryJson = await summaryRes.json()

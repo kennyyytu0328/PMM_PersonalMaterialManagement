@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl'
 import { ArrowLeft } from 'lucide-react'
 import { ItemForm } from '@/components/items/item-form'
 import { Loading } from '@/components/ui/loading'
+import { apiFetch } from '@/lib/api'
 
 interface ItemData {
   id: number
@@ -31,7 +32,7 @@ export default function EditItemPage({ params }: { params: Promise<{ id: string 
   useEffect(() => {
     async function fetchItem() {
       try {
-        const res = await fetch(`/api/items/${id}`)
+        const res = await apiFetch(`/api/items/${id}`)
         const json = await res.json()
 
         if (!json.success) {

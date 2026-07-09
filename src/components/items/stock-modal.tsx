@@ -6,6 +6,7 @@ import { Modal } from '@/components/ui/modal'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useToast } from '@/components/ui/toast'
+import { apiFetch } from '@/lib/api'
 
 type StockType = 'IN' | 'OUT' | 'ADJUST'
 
@@ -44,7 +45,7 @@ export function StockModal({ open, onClose, itemId, itemName, type, onSuccess }:
 
     setSubmitting(true)
     try {
-      const res = await fetch('/api/transactions', {
+      const res = await apiFetch('/api/transactions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ itemId, type, quantity: qty, note: note || undefined }),

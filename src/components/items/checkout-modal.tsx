@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
 import { useToast } from '@/components/ui/toast'
+import { apiFetch } from '@/lib/api'
 
 interface User {
   id: number
@@ -40,7 +41,7 @@ export function CheckoutModal({ open, onClose, itemId, itemName, onSuccess }: Ch
     async function fetchUsers() {
       setLoadingUsers(true)
       try {
-        const res = await fetch('/api/users')
+        const res = await apiFetch('/api/users')
         const json = await res.json()
         if (json.success) {
           setUsers(json.data)
@@ -71,7 +72,7 @@ export function CheckoutModal({ open, onClose, itemId, itemName, onSuccess }: Ch
 
     setSubmitting(true)
     try {
-      const res = await fetch('/api/checkouts', {
+      const res = await apiFetch('/api/checkouts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

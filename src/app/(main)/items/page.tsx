@@ -9,6 +9,7 @@ import { ItemCard } from '@/components/items/item-card'
 import { ItemFilters } from '@/components/items/item-filters'
 import { Loading } from '@/components/ui/loading'
 import { EmptyState } from '@/components/ui/empty-state'
+import { apiFetch } from '@/lib/api'
 
 interface Category {
   id: number
@@ -50,8 +51,8 @@ export default function ItemsPage() {
     async function fetchFilters() {
       try {
         const [catRes, locRes] = await Promise.all([
-          fetch('/api/categories'),
-          fetch('/api/locations'),
+          apiFetch('/api/categories'),
+          apiFetch('/api/locations'),
         ])
         const catJson = await catRes.json()
         const locJson = await locRes.json()
@@ -89,7 +90,7 @@ export default function ItemsPage() {
       if (locationId) params.set('locationId', locationId)
       params.set('limit', '50')
 
-      const res = await fetch(`/api/items?${params}`)
+      const res = await apiFetch(`/api/items?${params}`)
       const json = await res.json()
 
       if (json.success) {

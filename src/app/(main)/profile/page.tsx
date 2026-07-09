@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { useToast } from '@/components/ui/toast'
+import { apiFetch } from '@/lib/api'
 
 interface PasswordForm {
   currentPassword: string
@@ -54,7 +55,7 @@ export default function ProfilePage() {
 
     setSaving(true)
     try {
-      const res = await fetch('/api/users/me/password', {
+      const res = await apiFetch('/api/users/me/password', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

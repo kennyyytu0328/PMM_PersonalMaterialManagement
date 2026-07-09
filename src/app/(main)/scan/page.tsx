@@ -8,6 +8,7 @@ import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Loading } from '@/components/ui/loading'
+import { apiFetch } from '@/lib/api'
 
 type ScanState = 'scanning' | 'loading' | 'found' | 'not-found'
 
@@ -40,7 +41,7 @@ export default function ScanPage() {
     setState('loading')
 
     try {
-      const res = await fetch(`/api/scan?barcode=${encodeURIComponent(barcode)}`)
+      const res = await apiFetch(`/api/scan?barcode=${encodeURIComponent(barcode)}`)
       const json = await res.json()
 
       if (json.success) {

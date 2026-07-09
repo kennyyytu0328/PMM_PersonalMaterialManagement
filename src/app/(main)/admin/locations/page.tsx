@@ -10,6 +10,7 @@ import { Loading } from '@/components/ui/loading'
 import { EmptyState } from '@/components/ui/empty-state'
 import { useToast } from '@/components/ui/toast'
 import { formatDate } from '@/lib/utils'
+import { apiFetch } from '@/lib/api'
 
 interface Location {
   id: number
@@ -38,7 +39,7 @@ export default function LocationsPage() {
 
   const fetchLocations = useCallback(async () => {
     try {
-      const res = await fetch('/api/locations')
+      const res = await apiFetch('/api/locations')
       const json = await res.json()
       if (json.success) setLocations(json.data)
     } catch {
@@ -80,7 +81,7 @@ export default function LocationsPage() {
     try {
       const url = editing ? `/api/locations/${editing.id}` : '/api/locations'
       const method = editing ? 'PUT' : 'POST'
-      const res = await fetch(url, {
+      const res = await apiFetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -106,7 +107,7 @@ export default function LocationsPage() {
   const handleDelete = async (loc: Location) => {
     if (!confirm(t('confirmDelete', { name: loc.name }))) return
     try {
-      const res = await fetch(`/api/locations/${loc.id}`, { method: 'DELETE' })
+      const res = await apiFetch(`/api/locations/${loc.id}`, { method: 'DELETE' })
       const json = await res.json()
       if (json.success) {
         toast(t('deleted'), 'success')
