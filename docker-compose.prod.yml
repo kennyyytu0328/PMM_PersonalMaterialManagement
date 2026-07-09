@@ -1,0 +1,24 @@
+# Production compose — sub-path deployment behind the upstream nginx.
+# Secrets/overrides come from a root .env (copy .env.production.example → .env, chmod 600).
+services:
+  pmm:
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_BASE_PATH: /gogoffcc-pmm
+    ports:
+      # Loopback only — host nginx is the sole consumer. Port check: sudo ss -tlnp | grep ':3001'
+      - "127.0.0.1:${PMM_HOST_PORT:-3001}:3000"
+    volumes:
+      - pmm-data:/app/data
+    environment:
+      - TZ=Asia/Taipei
+      - DATABASE_URL=file:/app/data/pmm.db
+      - AUTH_URL=${AUTH_URL}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - SEED_SAMPLE_DATA=false
+      - ADMIN_INITIAL_PASSWORD=${ADMIN_INITIAL_PASSWORD}
+    restart: unless-stopped
+
+volumes:
+  pmm-data:
