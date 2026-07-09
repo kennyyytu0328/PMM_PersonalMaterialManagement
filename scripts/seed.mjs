@@ -36,10 +36,13 @@ async function seed() {
     return
   }
 
+  const seedSampleData = (process.env.SEED_SAMPLE_DATA ?? 'true') !== 'false'
+  const adminPassword = process.env.ADMIN_INITIAL_PASSWORD || 'admin123'
+
   console.log('Seeding database...')
 
   // --- Users ---
-  const passwordHash = await bcrypt.hash('admin123', 10)
+  const passwordHash = await bcrypt.hash(adminPassword, 10)
   const adminResult = db
     .prepare(
       `INSERT INTO users (name, email, password_hash, role)
@@ -49,6 +52,12 @@ async function seed() {
     .get('Admin', 'admin@pmm.local', passwordHash, 'admin')
 
   console.log(`Created admin: ${adminResult.email}`)
+
+  if (!seedSampleData) {
+    console.log('SEED_SAMPLE_DATA=false — skipping sample data. Admin user only.')
+    db.close()
+    return
+  }
 
   // --- Categories ---
   const insertCategory = db.prepare(
@@ -112,7 +121,11 @@ async function seed() {
   seedTransactions()
 
   console.log(`Created ${cats.length} categories, ${locs.length} locations, ${items.length} items, 5 transactions`)
-  console.log('\nLogin: admin@pmm.local / admin123')
+  console.log(
+    process.env.ADMIN_INITIAL_PASSWORD
+      ? '\nLogin: admin@pmm.local (password from ADMIN_INITIAL_PASSWORD)'
+      : '\nLogin: admin@pmm.local / admin123'
+  )
 
   db.close()
 }
