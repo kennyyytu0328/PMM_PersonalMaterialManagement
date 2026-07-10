@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { db } from '@/db'
-import { items } from '@/db/schema'
+import { items, assets } from '@/db/schema'
 import { eq, or } from 'drizzle-orm'
 
 export async function GET(request: NextRequest) {
@@ -38,11 +38,22 @@ export async function GET(request: NextRequest) {
       })
     }
 
-    if (!item) {
-      return NextResponse.json({ success: false, error: 'Item not found' }, { status: 404 })
+    if (item) {
+      return NextResponse.json({ success: true, matchType: 'item', data: item })
     }
 
-    return NextResponse.json({ success: true, data: item })
+    const code = barcode ?? sku
+    if (code) {
+      const asset = await db.query.assets.findFirst({
+        where: or(eq(assets.barcode, code), eq(assets.assetNo, code)),
+        with: { category: true, location: true, custodian: true },
+      })
+      if (asset) {
+        return NextResponse.json({ success: true, matchType: 'asset', data: asset })
+      }
+    }
+
+    return NextResponse.json({ success: false, error: 'Item not found' }, { status: 404 })
   } catch (error) {
     return NextResponse.json({ success: false, error: 'Scan lookup failed' }, { status: 500 })
   }
