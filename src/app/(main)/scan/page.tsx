@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import { ScanLine, Package, Plus, RotateCcw } from 'lucide-react'
 import { useTranslations } from 'next-intl'
@@ -30,6 +31,7 @@ const BarcodeScanner = dynamic(
 
 export default function ScanPage() {
   const t = useTranslations('scan')
+  const router = useRouter()
   const [state, setState] = useState<ScanState>('scanning')
   const [scannedBarcode, setScannedBarcode] = useState('')
   const [foundItem, setFoundItem] = useState<FoundItem | null>(null)
@@ -45,6 +47,10 @@ export default function ScanPage() {
       const json = await res.json()
 
       if (json.success) {
+        if (json.matchType === 'asset') {
+          router.push(`/assets/${json.data.id}`)
+          return
+        }
         setFoundItem(json.data)
         setState('found')
       } else {
@@ -53,7 +59,7 @@ export default function ScanPage() {
     } catch {
       setState('not-found')
     }
-  }, [state])
+  }, [state, router])
 
   function handleScanAgain() {
     setFoundItem(null)

@@ -1,7 +1,16 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Package, AlertTriangle, ArrowUpRight, DollarSign } from 'lucide-react'
+import Link from 'next/link'
+import {
+  Package,
+  AlertTriangle,
+  ArrowUpRight,
+  DollarSign,
+  Briefcase,
+  UserCheck,
+  ClipboardCheck,
+} from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { StatCard } from '@/components/reports/stat-card'
 import { ActivityItem } from '@/components/activity/activity-item'
@@ -17,6 +26,12 @@ interface SummaryData {
   activeCheckouts: number
 }
 
+interface AssetSummary {
+  totalAssets: number
+  assetsInUse: number
+  pendingScrap: number
+}
+
 interface Transaction {
   id: number
   type: 'IN' | 'OUT' | 'ADJUST'
@@ -29,19 +44,26 @@ interface Transaction {
 export default function DashboardPage() {
   const t = useTranslations('dashboard')
   const [summary, setSummary] = useState<SummaryData | null>(null)
+  const [assetSummary, setAssetSummary] = useState<AssetSummary | null>(null)
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const [summaryRes, txRes] = await Promise.all([
+        const [summaryRes, txRes, assetsRes, inUseRes, scrapRes] = await Promise.all([
           apiFetch('/api/reports?type=summary'),
           apiFetch('/api/transactions?limit=10'),
+          apiFetch('/api/assets?limit=1'),
+          apiFetch('/api/assets?status=in_use&limit=1'),
+          apiFetch('/api/scrap-requests?status=pending&limit=1'),
         ])
 
         const summaryJson = await summaryRes.json()
         const txJson = await txRes.json()
+        const assetsJson = await assetsRes.json()
+        const inUseJson = await inUseRes.json()
+        const scrapJson = await scrapRes.json()
 
         if (summaryJson.success) {
           setSummary(summaryJson.data)
@@ -49,6 +71,14 @@ export default function DashboardPage() {
 
         if (txJson.success) {
           setTransactions(txJson.data)
+        }
+
+        if (assetsJson.success && inUseJson.success && scrapJson.success) {
+          setAssetSummary({
+            totalAssets: assetsJson.meta.total,
+            assetsInUse: inUseJson.meta.total,
+            pendingScrap: scrapJson.meta.total,
+          })
         }
       } catch {
         // silently fail — UI shows empty state
@@ -97,6 +127,35 @@ export default function DashboardPage() {
           color="green"
         />
       </div>
+
+      {assetSummary && (
+        <div className="grid grid-cols-3 gap-3">
+          <Link href="/assets">
+            <StatCard
+              label={t('stats.totalAssets')}
+              value={assetSummary.totalAssets}
+              icon={<Briefcase size={20} />}
+              color="blue"
+            />
+          </Link>
+          <Link href="/assets?status=in_use">
+            <StatCard
+              label={t('stats.assetsInUse')}
+              value={assetSummary.assetsInUse}
+              icon={<UserCheck size={20} />}
+              color="green"
+            />
+          </Link>
+          <Link href="/admin/scrap-approvals">
+            <StatCard
+              label={t('stats.pendingScrap')}
+              value={assetSummary.pendingScrap}
+              icon={<ClipboardCheck size={20} />}
+              color="yellow"
+            />
+          </Link>
+        </div>
+      )}
 
       <Card>
         <CardHeader>

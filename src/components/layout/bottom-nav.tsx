@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
-import { Home, Package, Camera, ArrowLeftRight, BarChart3 } from 'lucide-react'
+import { Home, Package, Briefcase, Camera, ArrowLeftRight, BarChart3 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 
@@ -10,6 +10,7 @@ const navItems = [
   { href: '/dashboard', key: 'home', icon: Home },
   { href: '/items', key: 'items', icon: Package },
   { href: '/scan', key: 'scan', icon: Camera },
+  { href: '/assets', key: 'assets', icon: Briefcase },
   { href: '/activity', key: 'activity', icon: ArrowLeftRight },
   { href: '/reports', key: 'reports', icon: BarChart3 },
 ] as const
@@ -30,7 +31,7 @@ export function BottomNav() {
               key={item.href}
               href={item.href}
               className={cn(
-                'flex flex-col items-center py-2 px-3',
+                'flex flex-col items-center py-2 px-2',
                 isScan ? 'relative -top-3' : '',
                 isActive ? 'text-blue-600' : 'text-gray-400'
               )}
