@@ -63,6 +63,83 @@ export const checkouts = sqliteTable('checkouts', {
   note: text('note'),
 })
 
+export const people = sqliteTable('people', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  name: text('name').notNull(),
+  department: text('department'),
+  email: text('email'),
+  isActive: integer('is_active', { mode: 'boolean' }).notNull().default(true),
+  createdAt: text('created_at').notNull().default(sql`(datetime('now'))`),
+})
+
+export const assets = sqliteTable('assets', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  assetNo: text('asset_no').notNull().unique(),
+  name: text('name').notNull(),
+  description: text('description'),
+  categoryId: integer('category_id').references(() => categories.id),
+  locationId: integer('location_id').references(() => locations.id),
+  custodianId: integer('custodian_id').references(() => people.id),
+  status: text('status', {
+    enum: ['idle', 'in_use', 'repair', 'lent_out', 'lost', 'scrapped'],
+  })
+    .notNull()
+    .default('idle'),
+  acquiredAt: text('acquired_at'),
+  cost: real('cost'),
+  vendor: text('vendor'),
+  barcode: text('barcode'),
+  imageUrl: text('image_url'),
+  scrappedAt: text('scrapped_at'),
+  scrapReason: text('scrap_reason'),
+  createdAt: text('created_at').notNull().default(sql`(datetime('now'))`),
+  updatedAt: text('updated_at').notNull().default(sql`(datetime('now'))`),
+})
+
+export const assetEvents = sqliteTable('asset_events', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  assetId: integer('asset_id')
+    .notNull()
+    .references(() => assets.id),
+  type: text('type', {
+    enum: [
+      'REGISTER',
+      'TRANSFER',
+      'STATUS_CHANGE',
+      'SCRAP_REQUESTED',
+      'SCRAP_APPROVED',
+      'SCRAP_REJECTED',
+    ],
+  }).notNull(),
+  fromCustodianId: integer('from_custodian_id').references(() => people.id),
+  toCustodianId: integer('to_custodian_id').references(() => people.id),
+  fromStatus: text('from_status'),
+  toStatus: text('to_status'),
+  note: text('note'),
+  performedBy: integer('performed_by')
+    .notNull()
+    .references(() => users.id),
+  createdAt: text('created_at').notNull().default(sql`(datetime('now'))`),
+})
+
+export const scrapRequests = sqliteTable('scrap_requests', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  assetId: integer('asset_id')
+    .notNull()
+    .references(() => assets.id),
+  reason: text('reason').notNull(),
+  requestedBy: integer('requested_by')
+    .notNull()
+    .references(() => users.id),
+  status: text('status', { enum: ['pending', 'approved', 'rejected'] })
+    .notNull()
+    .default('pending'),
+  reviewedBy: integer('reviewed_by').references(() => users.id),
+  reviewNote: text('review_note'),
+  createdAt: text('created_at').notNull().default(sql`(datetime('now'))`),
+  reviewedAt: text('reviewed_at'),
+})
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   transactions: many(transactions),
@@ -96,6 +173,47 @@ export const checkoutsRelations = relations(checkouts, ({ one }) => ({
   user: one(users, { fields: [checkouts.userId], references: [users.id] }),
 }))
 
+export const peopleRelations = relations(people, ({ many }) => ({
+  assets: many(assets),
+}))
+
+export const assetsRelations = relations(assets, ({ one, many }) => ({
+  category: one(categories, { fields: [assets.categoryId], references: [categories.id] }),
+  location: one(locations, { fields: [assets.locationId], references: [locations.id] }),
+  custodian: one(people, { fields: [assets.custodianId], references: [people.id] }),
+  events: many(assetEvents),
+  scrapRequests: many(scrapRequests),
+}))
+
+export const assetEventsRelations = relations(assetEvents, ({ one }) => ({
+  asset: one(assets, { fields: [assetEvents.assetId], references: [assets.id] }),
+  fromCustodian: one(people, {
+    fields: [assetEvents.fromCustodianId],
+    references: [people.id],
+    relationName: 'fromCustodian',
+  }),
+  toCustodian: one(people, {
+    fields: [assetEvents.toCustodianId],
+    references: [people.id],
+    relationName: 'toCustodian',
+  }),
+  performer: one(users, { fields: [assetEvents.performedBy], references: [users.id] }),
+}))
+
+export const scrapRequestsRelations = relations(scrapRequests, ({ one }) => ({
+  asset: one(assets, { fields: [scrapRequests.assetId], references: [assets.id] }),
+  requester: one(users, {
+    fields: [scrapRequests.requestedBy],
+    references: [users.id],
+    relationName: 'scrapRequester',
+  }),
+  reviewer: one(users, {
+    fields: [scrapRequests.reviewedBy],
+    references: [users.id],
+    relationName: 'scrapReviewer',
+  }),
+}))
+
 export type User = typeof users.$inferSelect
 export type NewUser = typeof users.$inferInsert
 export type Item = typeof items.$inferSelect
@@ -108,3 +226,11 @@ export type Transaction = typeof transactions.$inferSelect
 export type NewTransaction = typeof transactions.$inferInsert
 export type Checkout = typeof checkouts.$inferSelect
 export type NewCheckout = typeof checkouts.$inferInsert
+export type Person = typeof people.$inferSelect
+export type NewPerson = typeof people.$inferInsert
+export type Asset = typeof assets.$inferSelect
+export type NewAsset = typeof assets.$inferInsert
+export type AssetEvent = typeof assetEvents.$inferSelect
+export type NewAssetEvent = typeof assetEvents.$inferInsert
+export type ScrapRequest = typeof scrapRequests.$inferSelect
+export type NewScrapRequest = typeof scrapRequests.$inferInsert
