@@ -5,7 +5,8 @@ A mobile-first web application for tracking personal inventory, materials, and e
 ## Features
 
 - **Inventory Management** — Full CRUD for items with SKU generation, barcode support, and stock tracking
-- **Barcode Scanner** — Scan Code 39 barcodes using your device camera to quickly look up or add items
+- **Asset Management (財產管理)** — Per-unit fixed assets with auto-generated asset numbers, custodian assignment (人員 registry), transfer between custodians, full lifecycle status, immutable event history, and a request + admin-approve scrap flow (報廢審核)
+- **Barcode Scanner** — Scan Code 39 barcodes using your device camera to quickly look up items or assets (by barcode or asset number)
 - **Stock Transactions** — Record stock in, stock out, and adjustments with full audit trail
 - **Checkout System** — Check out items to users with due dates and return tracking
 - **Reports & Analytics** — Summary stats, stock movement charts, low-stock alerts, category/location breakdowns
@@ -108,11 +109,12 @@ src/
 │   ├── (auth)/login/          # Login page
 │   ├── (main)/                # Protected pages
 │   │   ├── dashboard/         # Home dashboard
-│   │   ├── items/             # Item management
+│   │   ├── items/             # Item management (consumables)
+│   │   ├── assets/            # Fixed asset management (register, transfer, scrap)
 │   │   ├── scan/              # Barcode scanner
 │   │   ├── activity/          # Transaction log
 │   │   ├── reports/           # Analytics
-│   │   ├── admin/             # User, category & location management
+│   │   ├── admin/             # Users, categories, locations, people, scrap approvals
 │   │   └── profile/           # Self-service profile & password change
 │   └── api/                   # REST API routes
 ├── components/
@@ -140,17 +142,24 @@ categories     1──N  items
 locations      1──N  items
 items          1──N  transactions
 items          1──N  checkouts
+categories     1──N  assets
+locations      1──N  assets
+people         1──N  assets          (custodian)
+assets         1──N  assetEvents     (immutable history)
+assets         1──N  scrapRequests
 ```
 
-**Tables:** `users`, `items`, `categories`, `locations`, `transactions`, `checkouts`
+**Tables:** `users`, `items`, `categories`, `locations`, `transactions`, `checkouts`, `people`, `assets`, `assetEvents`, `scrapRequests`
+
+The inventory follows a hybrid model: quantity-based `items` for consumables, and per-unit `assets` with a custodian, lifecycle status, and audit history for fixed assets.
 
 ## User Roles
 
 | Role | Permissions |
 |------|------------|
-| `admin` | Full access — manage users, categories, locations, all items |
-| `staff` | Create/edit items, record transactions, manage checkouts |
-| `viewer` | Read-only access to inventory and reports |
+| `admin` | Full access — manage users, categories, locations, people, all items/assets, approve scrap requests |
+| `staff` | Create/edit items and assets, record transactions, manage checkouts, submit scrap requests |
+| `viewer` | Read-only access to inventory, assets, and reports |
 
 ## Environment Variables
 
