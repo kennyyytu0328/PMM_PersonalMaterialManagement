@@ -3,15 +3,10 @@ import { auth } from '@/lib/auth'
 import { db } from '@/db'
 import { assets, assetEvents, people, scrapRequests } from '@/db/schema'
 import { transferAssetSchema } from '@/lib/validations'
-import { assetActionBlockReason } from '@/lib/asset-guards'
+import { assetActionBlockReason, BLOCK_MESSAGES } from '@/lib/asset-guards'
 import { eq, and } from 'drizzle-orm'
 
 type Params = { params: Promise<{ id: string }> }
-
-const BLOCK_MESSAGES = {
-  scrapped: 'Asset is scrapped',
-  pendingScrap: 'Asset has a pending scrap request',
-} as const
 
 export async function POST(request: NextRequest, { params }: Params) {
   try {
@@ -70,21 +65,27 @@ export async function POST(request: NextRequest, { params }: Params) {
     }
 
     const newStatus = asset.status === 'idle' ? 'in_use' : asset.status
+    const performedBy = parseInt((session.user as any).id)
+    const updatedAt = new Date().toISOString()
 
-    await db
-      .update(assets)
-      .set({ custodianId, status: newStatus, updatedAt: new Date().toISOString() })
-      .where(eq(assets.id, assetId))
+    db.transaction((tx) => {
+      tx.update(assets)
+        .set({ custodianId, status: newStatus, updatedAt })
+        .where(eq(assets.id, assetId))
+        .run()
 
-    await db.insert(assetEvents).values({
-      assetId,
-      type: 'TRANSFER',
-      fromCustodianId: asset.custodianId,
-      toCustodianId: custodianId,
-      fromStatus: asset.status,
-      toStatus: newStatus,
-      note,
-      performedBy: parseInt((session.user as any).id),
+      tx.insert(assetEvents)
+        .values({
+          assetId,
+          type: 'TRANSFER',
+          fromCustodianId: asset.custodianId,
+          toCustodianId: custodianId,
+          fromStatus: asset.status,
+          toStatus: newStatus,
+          note,
+          performedBy,
+        })
+        .run()
     })
 
     const updated = await db.query.assets.findFirst({

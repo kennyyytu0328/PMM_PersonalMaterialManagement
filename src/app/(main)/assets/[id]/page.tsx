@@ -13,6 +13,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { AssetStatusBadge } from '@/components/assets/asset-status-badge'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { apiFetch } from '@/lib/api'
+import { ASSET_STATUSES } from '@/lib/asset-guards'
 
 interface PersonRef {
   id: number
@@ -50,7 +51,7 @@ interface AssetDetail {
   pendingScrapRequest: { id: number; reason: string } | null
 }
 
-const CHANGEABLE_STATUSES = ['idle', 'in_use', 'repair', 'lent_out', 'lost'] as const
+const CHANGEABLE_STATUSES = ASSET_STATUSES.filter((s) => s !== 'scrapped')
 
 export default function AssetDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)

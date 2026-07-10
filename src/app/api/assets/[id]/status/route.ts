@@ -3,15 +3,10 @@ import { auth } from '@/lib/auth'
 import { db } from '@/db'
 import { assets, assetEvents, scrapRequests } from '@/db/schema'
 import { changeAssetStatusSchema } from '@/lib/validations'
-import { assetActionBlockReason } from '@/lib/asset-guards'
+import { assetActionBlockReason, BLOCK_MESSAGES } from '@/lib/asset-guards'
 import { eq, and } from 'drizzle-orm'
 
 type Params = { params: Promise<{ id: string }> }
-
-const BLOCK_MESSAGES = {
-  scrapped: 'Asset is scrapped',
-  pendingScrap: 'Asset has a pending scrap request',
-} as const
 
 export async function POST(request: NextRequest, { params }: Params) {
   try {
@@ -61,18 +56,22 @@ export async function POST(request: NextRequest, { params }: Params) {
       )
     }
 
-    await db
-      .update(assets)
-      .set({ status, updatedAt: new Date().toISOString() })
-      .where(eq(assets.id, assetId))
+    const performedBy = parseInt((session.user as any).id)
+    const updatedAt = new Date().toISOString()
 
-    await db.insert(assetEvents).values({
-      assetId,
-      type: 'STATUS_CHANGE',
-      fromStatus: asset.status,
-      toStatus: status,
-      note,
-      performedBy: parseInt((session.user as any).id),
+    db.transaction((tx) => {
+      tx.update(assets).set({ status, updatedAt }).where(eq(assets.id, assetId)).run()
+
+      tx.insert(assetEvents)
+        .values({
+          assetId,
+          type: 'STATUS_CHANGE',
+          fromStatus: asset.status,
+          toStatus: status,
+          note,
+          performedBy,
+        })
+        .run()
     })
 
     const updated = await db.query.assets.findFirst({

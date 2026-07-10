@@ -61,46 +61,55 @@ export async function POST(request: NextRequest, { params }: Params) {
       return NextResponse.json({ success: false, error: 'Asset not found' }, { status: 404 })
     }
 
-    if (action === 'approve') {
-      await db
-        .update(assets)
+    const updated = db.transaction((tx) => {
+      if (action === 'approve') {
+        tx.update(assets)
+          .set({
+            status: 'scrapped',
+            custodianId: null,
+            scrappedAt: now,
+            scrapReason: scrapRequest.reason,
+            updatedAt: now,
+          })
+          .where(eq(assets.id, asset.id))
+          .run()
+
+        tx.insert(assetEvents)
+          .values({
+            assetId: asset.id,
+            type: 'SCRAP_APPROVED',
+            fromCustodianId: asset.custodianId,
+            fromStatus: asset.status,
+            toStatus: 'scrapped',
+            note: reviewNote,
+            performedBy: reviewerId,
+          })
+          .run()
+      } else {
+        tx.insert(assetEvents)
+          .values({
+            assetId: asset.id,
+            type: 'SCRAP_REJECTED',
+            note: reviewNote,
+            performedBy: reviewerId,
+          })
+          .run()
+      }
+
+      const [updatedRequest] = tx
+        .update(scrapRequests)
         .set({
-          status: 'scrapped',
-          custodianId: null,
-          scrappedAt: now,
-          scrapReason: scrapRequest.reason,
-          updatedAt: now,
+          status: action === 'approve' ? 'approved' : 'rejected',
+          reviewedBy: reviewerId,
+          reviewNote,
+          reviewedAt: now,
         })
-        .where(eq(assets.id, asset.id))
+        .where(eq(scrapRequests.id, requestId))
+        .returning()
+        .all()
 
-      await db.insert(assetEvents).values({
-        assetId: asset.id,
-        type: 'SCRAP_APPROVED',
-        fromCustodianId: asset.custodianId,
-        fromStatus: asset.status,
-        toStatus: 'scrapped',
-        note: reviewNote,
-        performedBy: reviewerId,
-      })
-    } else {
-      await db.insert(assetEvents).values({
-        assetId: asset.id,
-        type: 'SCRAP_REJECTED',
-        note: reviewNote,
-        performedBy: reviewerId,
-      })
-    }
-
-    const [updated] = await db
-      .update(scrapRequests)
-      .set({
-        status: action === 'approve' ? 'approved' : 'rejected',
-        reviewedBy: reviewerId,
-        reviewNote,
-        reviewedAt: now,
-      })
-      .where(eq(scrapRequests.id, requestId))
-      .returning()
+      return updatedRequest
+    })
 
     return NextResponse.json({ success: true, data: updated })
   } catch (error) {

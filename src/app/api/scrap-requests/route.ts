@@ -3,7 +3,7 @@ import { auth } from '@/lib/auth'
 import { db } from '@/db'
 import { assets, assetEvents, scrapRequests } from '@/db/schema'
 import { createScrapRequestSchema } from '@/lib/validations'
-import { assetActionBlockReason } from '@/lib/asset-guards'
+import { assetActionBlockReason, BLOCK_MESSAGES } from '@/lib/asset-guards'
 import { eq, and, desc, count, SQL } from 'drizzle-orm'
 
 export async function GET(request: NextRequest) {
@@ -90,31 +90,29 @@ export async function POST(request: NextRequest) {
     })
 
     const blocked = assetActionBlockReason(asset.status, !!pending)
-    if (blocked === 'scrapped') {
-      return NextResponse.json(
-        { success: false, error: 'Asset is already scrapped' },
-        { status: 400 }
-      )
-    }
-    if (blocked === 'pendingScrap') {
-      return NextResponse.json(
-        { success: false, error: 'Asset already has a pending scrap request' },
-        { status: 400 }
-      )
+    if (blocked) {
+      return NextResponse.json({ success: false, error: BLOCK_MESSAGES[blocked] }, { status: 400 })
     }
 
     const performedBy = parseInt((session.user as any).id)
 
-    const [scrapRequest] = await db
-      .insert(scrapRequests)
-      .values({ assetId, reason, requestedBy: performedBy })
-      .returning()
+    const scrapRequest = db.transaction((tx) => {
+      const [inserted] = tx
+        .insert(scrapRequests)
+        .values({ assetId, reason, requestedBy: performedBy })
+        .returning()
+        .all()
 
-    await db.insert(assetEvents).values({
-      assetId,
-      type: 'SCRAP_REQUESTED',
-      note: reason,
-      performedBy,
+      tx.insert(assetEvents)
+        .values({
+          assetId,
+          type: 'SCRAP_REQUESTED',
+          note: reason,
+          performedBy,
+        })
+        .run()
+
+      return inserted
     })
 
     return NextResponse.json({ success: true, data: scrapRequest }, { status: 201 })

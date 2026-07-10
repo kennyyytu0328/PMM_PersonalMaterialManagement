@@ -3,15 +3,10 @@ import { auth } from '@/lib/auth'
 import { db } from '@/db'
 import { assets, scrapRequests } from '@/db/schema'
 import { updateAssetSchema } from '@/lib/validations'
-import { assetActionBlockReason } from '@/lib/asset-guards'
+import { assetActionBlockReason, BLOCK_MESSAGES } from '@/lib/asset-guards'
 import { eq, and, ne, desc } from 'drizzle-orm'
 
 type Params = { params: Promise<{ id: string }> }
-
-const BLOCK_MESSAGES = {
-  scrapped: 'Asset is scrapped',
-  pendingScrap: 'Asset has a pending scrap request',
-} as const
 
 export async function GET(request: NextRequest, { params }: Params) {
   try {

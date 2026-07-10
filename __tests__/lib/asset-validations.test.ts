@@ -38,6 +38,11 @@ describe('updatePersonSchema', () => {
   it('accepts isActive toggle alone', () => {
     expect(updatePersonSchema.safeParse({ isActive: false }).success).toBe(true)
   })
+
+  it('accepts clearing department and email with null (Task 12 regression)', () => {
+    expect(updatePersonSchema.safeParse({ department: null }).success).toBe(true)
+    expect(updatePersonSchema.safeParse({ email: null }).success).toBe(true)
+  })
 })
 
 describe('createAssetSchema', () => {

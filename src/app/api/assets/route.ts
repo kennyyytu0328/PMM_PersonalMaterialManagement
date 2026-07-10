@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { db } from '@/db'
-import { assets, assetEvents } from '@/db/schema'
+import { assets, assetEvents, people } from '@/db/schema'
 import { createAssetSchema } from '@/lib/validations'
 import { generateAssetNo, nextAssetSeq } from '@/lib/asset-no'
 import { eq, and, like, or, desc, count, SQL } from 'drizzle-orm'
@@ -85,6 +85,18 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    if (parsed.data.custodianId) {
+      const custodian = await db.query.people.findFirst({
+        where: eq(people.id, parsed.data.custodianId),
+      })
+      if (!custodian || !custodian.isActive) {
+        return NextResponse.json(
+          { success: false, error: 'Custodian not found or inactive' },
+          { status: 400 }
+        )
+      }
+    }
+
     const existing = await db.select({ assetNo: assets.assetNo }).from(assets)
 
     let assetNo = parsed.data.assetNo
@@ -107,18 +119,26 @@ export async function POST(request: NextRequest) {
     }
 
     const status = parsed.data.custodianId ? 'in_use' : 'idle'
+    const performedBy = parseInt((session.user as any).id)
 
-    const [newAsset] = await db
-      .insert(assets)
-      .values({ ...parsed.data, assetNo, status })
-      .returning()
+    const newAsset = db.transaction((tx) => {
+      const [inserted] = tx
+        .insert(assets)
+        .values({ ...parsed.data, assetNo, status })
+        .returning()
+        .all()
 
-    await db.insert(assetEvents).values({
-      assetId: newAsset.id,
-      type: 'REGISTER',
-      toCustodianId: parsed.data.custodianId,
-      toStatus: status,
-      performedBy: parseInt((session.user as any).id),
+      tx.insert(assetEvents)
+        .values({
+          assetId: inserted.id,
+          type: 'REGISTER',
+          toCustodianId: parsed.data.custodianId,
+          toStatus: status,
+          performedBy,
+        })
+        .run()
+
+      return inserted
     })
 
     const asset = await db.query.assets.findFirst({

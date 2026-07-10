@@ -9,6 +9,11 @@ export const ASSET_STATUSES = [
 
 export type AssetStatus = (typeof ASSET_STATUSES)[number]
 
+export const BLOCK_MESSAGES = {
+  scrapped: 'Asset is scrapped',
+  pendingScrap: 'Asset has a pending scrap request',
+} as const
+
 export function assetActionBlockReason(
   status: string,
   hasPendingScrap: boolean
