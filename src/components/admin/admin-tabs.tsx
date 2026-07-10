@@ -3,13 +3,15 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useTranslations } from 'next-intl'
-import { Users, Tag, MapPin } from 'lucide-react'
+import { Users, Tag, MapPin, Contact, ClipboardCheck } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const tabs = [
   { href: '/admin/users', key: 'users', icon: Users },
   { href: '/admin/categories', key: 'categories', icon: Tag },
   { href: '/admin/locations', key: 'locations', icon: MapPin },
+  { href: '/admin/people', key: 'people', icon: Contact },
+  { href: '/admin/scrap-approvals', key: 'scrapApprovals', icon: ClipboardCheck },
 ] as const
 
 export function AdminTabs() {
@@ -17,7 +19,7 @@ export function AdminTabs() {
   const t = useTranslations('admin.tabs')
 
   return (
-    <div className="flex gap-1 border-b border-gray-200 px-4 pt-3 pb-0">
+    <div className="flex gap-1 overflow-x-auto border-b border-gray-200 px-4 pt-3 pb-0">
       {tabs.map((tab) => {
         const isActive = pathname.startsWith(tab.href)
         return (
@@ -25,7 +27,7 @@ export function AdminTabs() {
             key={tab.href}
             href={tab.href}
             className={cn(
-              'flex items-center gap-1.5 rounded-t-lg px-3 py-2 text-sm font-medium transition-colors',
+              'flex items-center gap-1.5 whitespace-nowrap rounded-t-lg px-3 py-2 text-sm font-medium transition-colors',
               isActive
                 ? 'border-b-2 border-blue-600 text-blue-600'
                 : 'text-gray-500 hover:text-gray-700'
