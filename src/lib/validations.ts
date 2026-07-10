@@ -51,3 +51,48 @@ export const createLocationSchema = z.object({
   name: z.string().min(1, 'Name is required').max(100),
   description: z.string().max(500).optional(),
 })
+
+export const createPersonSchema = z.object({
+  name: z.string().min(1, 'Name is required').max(100),
+  department: z.string().max(100).optional(),
+  email: z.string().email('Invalid email address').optional(),
+})
+
+export const updatePersonSchema = createPersonSchema.partial().extend({
+  isActive: z.boolean().optional(),
+})
+
+export const createAssetSchema = z.object({
+  assetNo: z.string().min(1).max(50).optional(),
+  name: z.string().min(1, 'Name is required').max(200),
+  description: z.string().max(1000).optional(),
+  categoryId: z.number().int().positive().optional(),
+  locationId: z.number().int().positive().optional(),
+  custodianId: z.number().int().positive().optional(),
+  acquiredAt: z.string().max(30).optional(),
+  cost: z.number().min(0).optional(),
+  vendor: z.string().max(200).optional(),
+  barcode: z.string().max(100).optional(),
+})
+
+export const updateAssetSchema = createAssetSchema.partial()
+
+export const transferAssetSchema = z.object({
+  custodianId: z.number().int().positive(),
+  note: z.string().max(500).optional(),
+})
+
+export const changeAssetStatusSchema = z.object({
+  status: z.enum(['idle', 'in_use', 'repair', 'lent_out', 'lost']),
+  note: z.string().max(500).optional(),
+})
+
+export const createScrapRequestSchema = z.object({
+  assetId: z.number().int().positive(),
+  reason: z.string().min(1, 'Reason is required').max(500),
+})
+
+export const reviewScrapRequestSchema = z.object({
+  action: z.enum(['approve', 'reject']),
+  reviewNote: z.string().max(500).optional(),
+})
