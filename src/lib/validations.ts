@@ -54,8 +54,8 @@ export const createLocationSchema = z.object({
 
 export const createPersonSchema = z.object({
   name: z.string().min(1, 'Name is required').max(100),
-  department: z.string().max(100).optional(),
-  email: z.string().email('Invalid email address').optional(),
+  department: z.string().max(100).optional().nullable(),
+  email: z.string().email('Invalid email address').optional().nullable(),
 })
 
 export const updatePersonSchema = createPersonSchema.partial().extend({

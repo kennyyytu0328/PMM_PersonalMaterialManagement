@@ -94,8 +94,8 @@ export default function PeoplePage() {
 
       const body: Record<string, unknown> = {
         name: form.name.trim(),
-        department: form.department.trim() || undefined,
-        email: form.email.trim() || undefined,
+        department: form.department.trim() || null,
+        email: form.email.trim() || null,
       }
       if (isEdit) {
         body.isActive = form.isActive
