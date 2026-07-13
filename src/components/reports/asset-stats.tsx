@@ -10,6 +10,7 @@ export interface AssetSummaryData {
   totalAssets: number
   totalValue: number
   activeValue: number
+  activeMissingCost: number
   inUse: number
   pendingScrap: number
   byStatus: Array<{ status: string; count: number }>
@@ -33,6 +34,11 @@ export function AssetStats({ data }: { data: AssetSummaryData }) {
           label={tStats('assetValue')}
           value={formatCurrency(data.activeValue)}
           sub={tStats('assetValueSub', { total: formatCurrency(data.totalValue) })}
+          warning={
+            data.activeMissingCost > 0
+              ? tStats('missingCost', { count: data.activeMissingCost })
+              : undefined
+          }
         />
         <StatCard label={tStats('assetsInUse')} value={data.inUse} />
         <StatCard

@@ -182,14 +182,16 @@ export async function GET(request: NextRequest) {
       ])
 
       const totalValue = allAssets.reduce((acc, asset) => acc + (asset.cost ?? 0), 0)
-      const activeValue = allAssets
-        .filter((asset) => asset.status !== 'scrapped' && asset.status !== 'lost')
-        .reduce((acc, asset) => acc + (asset.cost ?? 0), 0)
+      const activeAssets = allAssets.filter(
+        (asset) => asset.status !== 'scrapped' && asset.status !== 'lost'
+      )
+      const activeValue = activeAssets.reduce((acc, asset) => acc + (asset.cost ?? 0), 0)
+      const activeMissingCost = activeAssets.filter((asset) => asset.cost == null).length
       const inUse = allAssets.filter((asset) => asset.status === 'in_use').length
 
       return NextResponse.json({
         success: true,
-        data: { totalAssets, totalValue, activeValue, inUse, pendingScrap, byStatus },
+        data: { totalAssets, totalValue, activeValue, activeMissingCost, inUse, pendingScrap, byStatus },
       })
     }
 

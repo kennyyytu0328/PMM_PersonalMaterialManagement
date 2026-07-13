@@ -189,6 +189,7 @@
       "totalAssets": "Total Assets",
       "assetValue": "Asset Value",
       "assetValueSub": "of {total} total",
+      "missingCost": "{count, plural, one {# asset has no cost recorded} other {# assets have no cost recorded}}",
       "assetsInUse": "In Use",
       "pendingScrap": "Pending Scrap"
     },

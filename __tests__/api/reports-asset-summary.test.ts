@@ -52,6 +52,7 @@ describe('GET /api/reports?type=asset-summary', () => {
       totalAssets: 0,
       totalValue: 0,
       activeValue: 0,
+      activeMissingCost: 0,
       inUse: 0,
       pendingScrap: 0,
       byStatus: [],
@@ -79,6 +80,8 @@ describe('GET /api/reports?type=asset-summary', () => {
     expect(json.data.totalAssets).toBe(6)
     expect(json.data.totalValue).toBe(4600)
     expect(json.data.activeValue).toBe(3500)
+    // Chair (in_use, null cost) is active with no recorded cost; lost/scrapped null costs don't count
+    expect(json.data.activeMissingCost).toBe(1)
     expect(json.data.inUse).toBe(2)
     expect(json.data.pendingScrap).toBe(2)
     const statusMap = Object.fromEntries(

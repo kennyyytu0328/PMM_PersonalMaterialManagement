@@ -189,6 +189,7 @@
       "totalAssets": "資產總數",
       "assetValue": "資產價值",
       "assetValueSub": "總購置 {total}",
+      "missingCost": "{count} 筆資產未登記成本",
       "assetsInUse": "使用中",
       "pendingScrap": "待審報廢"
     },
