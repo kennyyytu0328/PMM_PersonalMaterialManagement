@@ -8,8 +8,9 @@ A mobile-first web application for tracking personal inventory, materials, and e
 - **Asset Management (財產管理)** — Per-unit fixed assets with auto-generated asset numbers, custodian assignment (人員 registry), transfer between custodians, full lifecycle status, immutable event history, and a request + admin-approve scrap flow (報廢審核)
 - **Barcode Scanner** — Scan Code 39 barcodes using your device camera to quickly look up items or assets (by barcode or asset number)
 - **Stock Transactions** — Record stock in, stock out, and adjustments with full audit trail
+- **Activity Feed** — Items and Assets tabs: item stock movements alongside the asset event history (registrations, transfers, status changes, scrap flow)
 - **Checkout System** — Check out items to users with due dates and return tracking
-- **Reports & Analytics** — Summary stats, stock movement charts, low-stock alerts, category/location breakdowns
+- **Reports & Analytics** — Items tab with summary stats, stock movement charts, low-stock alerts, and category breakdowns; Assets tab with asset counts, value (active vs. total acquisition, with a missing-cost indicator), and status breakdown
 - **Admin Panel** — Manage users, categories, and locations with role-based access control
 - **Self-Service Profile** — Users can change their own password; admins can reset any user's password
 - **Internationalization** — Full UI support for English and 繁體中文 (Traditional Chinese) via cookie-based locale
@@ -112,8 +113,8 @@ src/
 │   │   ├── items/             # Item management (consumables)
 │   │   ├── assets/            # Fixed asset management (register, transfer, scrap)
 │   │   ├── scan/              # Barcode scanner
-│   │   ├── activity/          # Transaction log
-│   │   ├── reports/           # Analytics
+│   │   ├── activity/          # Activity feed (item transactions + asset events)
+│   │   ├── reports/           # Analytics (items + assets tabs)
 │   │   ├── admin/             # Users, categories, locations, people, scrap approvals
 │   │   └── profile/           # Self-service profile & password change
 │   └── api/                   # REST API routes
