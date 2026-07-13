@@ -185,7 +185,12 @@
       "totalItems": "物品總數",
       "inventoryValue": "庫存價值",
       "lowStock": "低庫存",
-      "checkedOut": "借出中"
+      "checkedOut": "借出中",
+      "totalAssets": "資產總數",
+      "assetValue": "資產價值",
+      "assetValueSub": "總購置 {total}",
+      "assetsInUse": "使用中",
+      "pendingScrap": "待審報廢"
     },
     "stockMovements": "庫存異動 (近 30 天)",
     "noMovementData": "尚無異動資料",
@@ -200,7 +205,9 @@
     "itemsCount": "{count} 項",
     "totalQty": "總數量 {qty}",
     "leftBadge": "剩 {count}",
-    "minLabel": "最低: {min}"
+    "minLabel": "最低: {min}",
+    "assetsTitle": "資產",
+    "byStatus": "依狀態"
   },
   "admin": {
     "tabs": {

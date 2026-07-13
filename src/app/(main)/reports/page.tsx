@@ -7,6 +7,8 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Loading } from '@/components/ui/loading'
 import { StockChart } from '@/components/reports/stock-chart'
+import { StatCard } from '@/components/reports/stat-card'
+import { AssetStats, type AssetSummaryData } from '@/components/reports/asset-stats'
 import { formatCurrency } from '@/lib/utils'
 import { apiFetch } from '@/lib/api'
 
@@ -42,27 +44,7 @@ interface ReportsData {
   movements: MovementRow[]
   lowStock: LowStockItem[]
   categories: CategoryBreakdown[]
-}
-
-interface StatCardProps {
-  label: string
-  value: string | number
-  sub?: string
-  highlight?: boolean
-}
-
-function StatCard({ label, value, sub, highlight }: StatCardProps) {
-  return (
-    <div
-      className={`rounded-xl border p-4 shadow-sm ${highlight ? 'border-red-200 bg-red-50' : 'border-gray-200 bg-white'}`}
-    >
-      <p className={`text-xs font-medium uppercase tracking-wide ${highlight ? 'text-red-500' : 'text-gray-500'}`}>
-        {label}
-      </p>
-      <p className={`mt-1 text-2xl font-bold ${highlight ? 'text-red-700' : 'text-gray-900'}`}>{value}</p>
-      {sub && <p className="mt-0.5 text-xs text-gray-400">{sub}</p>}
-    </div>
-  )
+  assetSummary: AssetSummaryData | null
 }
 
 export default function ReportsPage() {
@@ -73,22 +55,25 @@ export default function ReportsPage() {
     movements: [],
     lowStock: [],
     categories: [],
+    assetSummary: null,
   })
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const loadReports = async () => {
       try {
-        const [summaryRes, movementsRes, lowStockRes] = await Promise.all([
+        const [summaryRes, movementsRes, lowStockRes, assetSummaryRes] = await Promise.all([
           apiFetch('/api/reports?type=summary'),
           apiFetch('/api/reports?type=movements'),
           apiFetch('/api/reports?type=low-stock'),
+          apiFetch('/api/reports?type=asset-summary'),
         ])
 
-        const [summaryJson, movementsJson, lowStockJson] = await Promise.all([
+        const [summaryJson, movementsJson, lowStockJson, assetSummaryJson] = await Promise.all([
           summaryRes.json(),
           movementsRes.json(),
           lowStockRes.json(),
+          assetSummaryRes.json(),
         ])
 
         const rawMovements = movementsJson.success ? movementsJson.data?.movements ?? [] : []
@@ -103,6 +88,7 @@ export default function ReportsPage() {
           movements,
           lowStock: lowStockJson.success ? lowStockJson.data ?? [] : [],
           categories: summaryJson.success ? summaryJson.data?.byCategory ?? [] : [],
+          assetSummary: assetSummaryJson.success ? assetSummaryJson.data : null,
         })
       } catch (err) {
         console.error('Failed to load reports:', err)
@@ -116,7 +102,7 @@ export default function ReportsPage() {
 
   if (loading) return <Loading />
 
-  const { summary, movements, lowStock, categories } = data
+  const { summary, movements, lowStock, categories, assetSummary } = data
 
   return (
     <div className="px-4 py-4 space-y-6">
@@ -205,6 +191,8 @@ export default function ReportsPage() {
           </CardContent>
         </Card>
       )}
+
+      {assetSummary && <AssetStats data={assetSummary} />}
     </div>
   )
 }

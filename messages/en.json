@@ -185,7 +185,12 @@
       "totalItems": "Total Items",
       "inventoryValue": "Inventory Value",
       "lowStock": "Low Stock",
-      "checkedOut": "Checked Out"
+      "checkedOut": "Checked Out",
+      "totalAssets": "Total Assets",
+      "assetValue": "Asset Value",
+      "assetValueSub": "of {total} total",
+      "assetsInUse": "In Use",
+      "pendingScrap": "Pending Scrap"
     },
     "stockMovements": "Stock Movements (Last 30 Days)",
     "noMovementData": "No movement data available",
@@ -200,7 +205,9 @@
     "itemsCount": "{count} items",
     "totalQty": "{qty} total qty",
     "leftBadge": "{count} left",
-    "minLabel": "min: {min}"
+    "minLabel": "min: {min}",
+    "assetsTitle": "Assets",
+    "byStatus": "By Status"
   },
   "admin": {
     "tabs": {

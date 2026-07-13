@@ -12,7 +12,7 @@ import {
   ClipboardCheck,
 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { StatCard } from '@/components/reports/stat-card'
+import { DashboardStatCard } from '@/components/reports/dashboard-stat-card'
 import { ActivityItem } from '@/components/activity/activity-item'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Loading } from '@/components/ui/loading'
@@ -102,25 +102,25 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <StatCard
+        <DashboardStatCard
           label={t('stats.totalItems')}
           value={summary?.totalItems ?? 0}
           icon={<Package size={20} />}
           color="blue"
         />
-        <StatCard
+        <DashboardStatCard
           label={t('stats.lowStock')}
           value={summary?.lowStockCount ?? 0}
           icon={<AlertTriangle size={20} />}
           color="yellow"
         />
-        <StatCard
+        <DashboardStatCard
           label={t('stats.checkedOut')}
           value={summary?.activeCheckouts ?? 0}
           icon={<ArrowUpRight size={20} />}
           color="purple"
         />
-        <StatCard
+        <DashboardStatCard
           label={t('stats.inventoryValue')}
           value={formatCurrency(summary?.totalValue ?? 0)}
           icon={<DollarSign size={20} />}
@@ -131,7 +131,7 @@ export default function DashboardPage() {
       {assetSummary && (
         <div className="grid grid-cols-3 gap-3">
           <Link href="/assets">
-            <StatCard
+            <DashboardStatCard
               label={t('stats.totalAssets')}
               value={assetSummary.totalAssets}
               icon={<Briefcase size={20} />}
@@ -139,7 +139,7 @@ export default function DashboardPage() {
             />
           </Link>
           <Link href="/assets?status=in_use">
-            <StatCard
+            <DashboardStatCard
               label={t('stats.assetsInUse')}
               value={assetSummary.assetsInUse}
               icon={<UserCheck size={20} />}
@@ -147,7 +147,7 @@ export default function DashboardPage() {
             />
           </Link>
           <Link href="/admin/scrap-approvals">
-            <StatCard
+            <DashboardStatCard
               label={t('stats.pendingScrap')}
               value={assetSummary.pendingScrap}
               icon={<ClipboardCheck size={20} />}
