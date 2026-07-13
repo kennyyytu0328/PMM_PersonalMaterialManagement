@@ -7,7 +7,8 @@ import { Button } from '@/components/ui/button'
 import { Loading } from '@/components/ui/loading'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Badge } from '@/components/ui/badge'
-import { cn, formatDate } from '@/lib/utils'
+import { ContentTabs } from '@/components/ui/content-tabs'
+import { formatDate } from '@/lib/utils'
 import { apiFetch } from '@/lib/api'
 import { AssetEventRow, type AssetEventEntry } from '@/components/activity/asset-event-row'
 
@@ -168,24 +169,7 @@ export default function ActivityPage() {
     <div className="px-4 py-4">
       <h1 className="mb-3 text-lg font-bold text-gray-900">{t('title')}</h1>
 
-      <div className="mb-4 flex gap-1 border-b border-gray-200">
-        {tabs.map(({ key, icon: Icon, label }) => (
-          <button
-            key={key}
-            type="button"
-            onClick={() => handleTabChange(key)}
-            className={cn(
-              'flex items-center gap-1.5 whitespace-nowrap rounded-t-lg px-3 py-2 text-sm font-medium transition-colors',
-              tab === key
-                ? 'border-b-2 border-blue-600 text-blue-600'
-                : 'text-gray-500 hover:text-gray-700'
-            )}
-          >
-            <Icon size={16} />
-            {label}
-          </button>
-        ))}
-      </div>
+      <ContentTabs tabs={tabs} active={tab} onChange={handleTabChange} />
 
       {tab === 'items' ? (
         loading ? (

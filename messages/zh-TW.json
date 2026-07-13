@@ -206,7 +206,8 @@
     "totalQty": "總數量 {qty}",
     "leftBadge": "剩 {count}",
     "minLabel": "最低: {min}",
-    "assetsTitle": "資產",
+    "tabItems": "物品",
+    "tabAssets": "資產",
     "byStatus": "依狀態"
   },
   "admin": {

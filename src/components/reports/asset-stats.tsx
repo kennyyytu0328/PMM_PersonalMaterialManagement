@@ -27,8 +27,6 @@ export function AssetStats({ data }: { data: AssetSummaryData }) {
 
   return (
     <>
-      <h2 className="text-base font-semibold text-gray-900">{t('assetsTitle')}</h2>
-
       <div className="grid grid-cols-2 gap-3">
         <StatCard label={tStats('totalAssets')} value={data.totalAssets} />
         <StatCard

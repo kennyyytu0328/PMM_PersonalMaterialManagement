@@ -1,11 +1,12 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { BarChart2, AlertTriangle } from 'lucide-react'
+import { BarChart2, AlertTriangle, Monitor, Package } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Loading } from '@/components/ui/loading'
+import { ContentTabs } from '@/components/ui/content-tabs'
 import { StockChart } from '@/components/reports/stock-chart'
 import { StatCard } from '@/components/reports/stat-card'
 import { AssetStats, type AssetSummaryData } from '@/components/reports/asset-stats'
@@ -47,9 +48,12 @@ interface ReportsData {
   assetSummary: AssetSummaryData | null
 }
 
+type ReportsTab = 'items' | 'assets'
+
 export default function ReportsPage() {
   const t = useTranslations('reports')
   const tStats = useTranslations('reports.stats')
+  const [tab, setTab] = useState<ReportsTab>('items')
   const [data, setData] = useState<ReportsData>({
     summary: null,
     movements: [],
@@ -104,11 +108,18 @@ export default function ReportsPage() {
 
   const { summary, movements, lowStock, categories, assetSummary } = data
 
+  const tabs = [
+    { key: 'items' as const, icon: Package, label: t('tabItems') },
+    { key: 'assets' as const, icon: Monitor, label: t('tabAssets') },
+  ]
+
   return (
     <div className="px-4 py-4 space-y-6">
       <h1 className="text-lg font-bold text-gray-900">{t('title')}</h1>
 
-      {summary && (
+      <ContentTabs tabs={tabs} active={tab} onChange={setTab} />
+
+      {tab === 'items' && summary && (
         <div className="grid grid-cols-2 gap-3">
           <StatCard label={tStats('totalItems')} value={summary.totalItems} />
           <StatCard
@@ -124,19 +135,21 @@ export default function ReportsPage() {
         </div>
       )}
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <BarChart2 size={18} />
-            {t('stockMovements')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <StockChart data={movements} />
-        </CardContent>
-      </Card>
+      {tab === 'items' && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <BarChart2 size={18} />
+              {t('stockMovements')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <StockChart data={movements} />
+          </CardContent>
+        </Card>
+      )}
 
-      {lowStock.length > 0 && (
+      {tab === 'items' && lowStock.length > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-red-700">
@@ -167,7 +180,7 @@ export default function ReportsPage() {
         </Card>
       )}
 
-      {categories.length > 0 && (
+      {tab === 'items' && categories.length > 0 && (
         <Card>
           <CardHeader>
             <CardTitle>{t('byCategory')}</CardTitle>
@@ -192,7 +205,7 @@ export default function ReportsPage() {
         </Card>
       )}
 
-      {assetSummary && <AssetStats data={assetSummary} />}
+      {tab === 'assets' && assetSummary && <AssetStats data={assetSummary} />}
     </div>
   )
 }

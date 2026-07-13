@@ -206,7 +206,8 @@
     "totalQty": "{qty} total qty",
     "leftBadge": "{count} left",
     "minLabel": "min: {min}",
-    "assetsTitle": "Assets",
+    "tabItems": "Items",
+    "tabAssets": "Assets",
     "byStatus": "By Status"
   },
   "admin": {
