@@ -171,6 +171,11 @@
       "RETURN": "歸還"
     },
     "unknownItem": "未知物品",
+    "unknownAsset": "未知資產",
+    "tabItems": "物品",
+    "tabAssets": "資產",
+    "noAssetEvents": "尚無資產紀錄",
+    "noAssetEventsDesc": "資產登錄、轉移與狀態變更會出現在這裡。",
     "unknownPerformer": "未知",
     "by": "由"
   },

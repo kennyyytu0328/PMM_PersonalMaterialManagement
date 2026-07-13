@@ -171,6 +171,11 @@
       "RETURN": "Return"
     },
     "unknownItem": "Unknown Item",
+    "unknownAsset": "Unknown Asset",
+    "tabItems": "Items",
+    "tabAssets": "Assets",
+    "noAssetEvents": "No asset events yet",
+    "noAssetEventsDesc": "Asset registrations, transfers, and status changes will appear here.",
     "unknownPerformer": "Unknown",
     "by": "By"
   },

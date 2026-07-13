@@ -1,14 +1,15 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { Activity } from 'lucide-react'
+import { Activity, Monitor, Package } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Loading } from '@/components/ui/loading'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Badge } from '@/components/ui/badge'
-import { formatDate } from '@/lib/utils'
+import { cn, formatDate } from '@/lib/utils'
 import { apiFetch } from '@/lib/api'
+import { AssetEventRow, type AssetEventEntry } from '@/components/activity/asset-event-row'
 
 interface TransactionItem {
   id: number
@@ -27,9 +28,9 @@ interface TransactionItem {
   }
 }
 
-interface ApiResponse {
+interface ListResponse<T> {
   success: boolean
-  data: TransactionItem[]
+  data: T[]
   meta?: {
     total: number
     page: number
@@ -78,18 +79,29 @@ function TransactionRow({ tx }: { tx: TransactionItem }) {
   )
 }
 
+type ActivityTab = 'items' | 'assets'
+
 export default function ActivityPage() {
   const t = useTranslations('activity')
+  const [tab, setTab] = useState<ActivityTab>('items')
+
   const [transactions, setTransactions] = useState<TransactionItem[]>([])
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(false)
   const [loading, setLoading] = useState(true)
   const [loadingMore, setLoadingMore] = useState(false)
 
+  const [assetEvents, setAssetEvents] = useState<AssetEventEntry[]>([])
+  const [assetPage, setAssetPage] = useState(1)
+  const [assetHasMore, setAssetHasMore] = useState(false)
+  const [assetLoading, setAssetLoading] = useState(false)
+  const [assetLoadingMore, setAssetLoadingMore] = useState(false)
+  const [assetLoaded, setAssetLoaded] = useState(false)
+
   const fetchPage = useCallback(async (pageNum: number, append: boolean) => {
     try {
       const res = await apiFetch(`/api/transactions?page=${pageNum}&limit=50`)
-      const json: ApiResponse = await res.json()
+      const json: ListResponse<TransactionItem> = await res.json()
       if (json.success) {
         setTransactions((prev) => (append ? [...prev, ...json.data] : json.data))
         const meta = json.meta
@@ -102,10 +114,34 @@ export default function ActivityPage() {
     }
   }, [])
 
+  const fetchAssetPage = useCallback(async (pageNum: number, append: boolean) => {
+    try {
+      const res = await apiFetch(`/api/asset-events?page=${pageNum}&limit=50`)
+      const json: ListResponse<AssetEventEntry> = await res.json()
+      if (json.success) {
+        setAssetEvents((prev) => (append ? [...prev, ...json.data] : json.data))
+        const meta = json.meta
+        if (meta) {
+          setAssetHasMore(meta.page * meta.limit < meta.total)
+        }
+      }
+    } catch (err) {
+      console.error('Failed to load asset events:', err)
+    }
+  }, [])
+
   useEffect(() => {
     setLoading(true)
     fetchPage(1, false).finally(() => setLoading(false))
   }, [fetchPage])
+
+  const handleTabChange = (nextTab: ActivityTab) => {
+    setTab(nextTab)
+    if (nextTab !== 'assets' || assetLoaded) return
+    setAssetLoaded(true)
+    setAssetLoading(true)
+    fetchAssetPage(1, false).finally(() => setAssetLoading(false))
+  }
 
   const handleLoadMore = async () => {
     const nextPage = page + 1
@@ -115,32 +151,91 @@ export default function ActivityPage() {
     setLoadingMore(false)
   }
 
+  const handleAssetLoadMore = async () => {
+    const nextPage = assetPage + 1
+    setAssetLoadingMore(true)
+    await fetchAssetPage(nextPage, true)
+    setAssetPage(nextPage)
+    setAssetLoadingMore(false)
+  }
+
+  const tabs = [
+    { key: 'items' as const, icon: Package, label: t('tabItems') },
+    { key: 'assets' as const, icon: Monitor, label: t('tabAssets') },
+  ]
+
   return (
     <div className="px-4 py-4">
-      <h1 className="mb-4 text-lg font-bold text-gray-900">{t('title')}</h1>
+      <h1 className="mb-3 text-lg font-bold text-gray-900">{t('title')}</h1>
 
-      {loading ? (
+      <div className="mb-4 flex gap-1 border-b border-gray-200">
+        {tabs.map(({ key, icon: Icon, label }) => (
+          <button
+            key={key}
+            type="button"
+            onClick={() => handleTabChange(key)}
+            className={cn(
+              'flex items-center gap-1.5 whitespace-nowrap rounded-t-lg px-3 py-2 text-sm font-medium transition-colors',
+              tab === key
+                ? 'border-b-2 border-blue-600 text-blue-600'
+                : 'text-gray-500 hover:text-gray-700'
+            )}
+          >
+            <Icon size={16} />
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {tab === 'items' ? (
+        loading ? (
+          <Loading />
+        ) : transactions.length === 0 ? (
+          <EmptyState
+            icon={<Activity size={40} />}
+            title={t('noTransactions')}
+            description={t('noTransactionsDesc')}
+          />
+        ) : (
+          <div className="flex flex-col gap-3">
+            {transactions.map((tx) => (
+              <TransactionRow key={tx.id} tx={tx} />
+            ))}
+
+            {hasMore && (
+              <Button
+                variant="secondary"
+                className="mt-2 w-full"
+                onClick={handleLoadMore}
+                disabled={loadingMore}
+              >
+                {loadingMore ? t('loadingMore') : t('loadMore')}
+              </Button>
+            )}
+          </div>
+        )
+      ) : assetLoading ? (
         <Loading />
-      ) : transactions.length === 0 ? (
+      ) : assetEvents.length === 0 ? (
         <EmptyState
-          icon={<Activity size={40} />}
-          title={t('noTransactions')}
-          description={t('noTransactionsDesc')}
+          icon={<Monitor size={40} />}
+          title={t('noAssetEvents')}
+          description={t('noAssetEventsDesc')}
         />
       ) : (
         <div className="flex flex-col gap-3">
-          {transactions.map((tx) => (
-            <TransactionRow key={tx.id} tx={tx} />
+          {assetEvents.map((event) => (
+            <AssetEventRow key={event.id} event={event} />
           ))}
 
-          {hasMore && (
+          {assetHasMore && (
             <Button
               variant="secondary"
               className="mt-2 w-full"
-              onClick={handleLoadMore}
-              disabled={loadingMore}
+              onClick={handleAssetLoadMore}
+              disabled={assetLoadingMore}
             >
-              {loadingMore ? t('loadingMore') : t('loadMore')}
+              {assetLoadingMore ? t('loadingMore') : t('loadMore')}
             </Button>
           )}
         </div>
