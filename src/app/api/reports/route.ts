@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { db } from '@/db'
-import { items, transactions, checkouts, categories, locations } from '@/db/schema'
+import { items, transactions, checkouts, categories, locations, assets, scrapRequests } from '@/db/schema'
 import { eq, isNull, isNotNull, lte, count, sum, sql, desc, and, gte } from 'drizzle-orm'
 
 export async function GET(request: NextRequest) {
@@ -167,8 +167,34 @@ export async function GET(request: NextRequest) {
       })
     }
 
+    if (type === 'asset-summary') {
+      const [[{ totalAssets }], allAssets, [{ pendingScrap }], byStatus] = await Promise.all([
+        db.select({ totalAssets: count() }).from(assets),
+        db.select({ status: assets.status, cost: assets.cost }).from(assets),
+        db
+          .select({ pendingScrap: count() })
+          .from(scrapRequests)
+          .where(eq(scrapRequests.status, 'pending')),
+        db
+          .select({ status: assets.status, count: count() })
+          .from(assets)
+          .groupBy(assets.status),
+      ])
+
+      const totalValue = allAssets.reduce((acc, asset) => acc + (asset.cost ?? 0), 0)
+      const activeValue = allAssets
+        .filter((asset) => asset.status !== 'scrapped' && asset.status !== 'lost')
+        .reduce((acc, asset) => acc + (asset.cost ?? 0), 0)
+      const inUse = allAssets.filter((asset) => asset.status === 'in_use').length
+
+      return NextResponse.json({
+        success: true,
+        data: { totalAssets, totalValue, activeValue, inUse, pendingScrap, byStatus },
+      })
+    }
+
     return NextResponse.json(
-      { success: false, error: `Unknown report type: ${type}. Use: summary, movements, low-stock, checkouts` },
+      { success: false, error: `Unknown report type: ${type}. Use: summary, movements, low-stock, checkouts, asset-summary` },
       { status: 400 }
     )
   } catch (error) {
