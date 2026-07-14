@@ -148,7 +148,7 @@ export default function CategoriesPage() {
           {categories.map((cat) => (
             <div
               key={cat.id}
-              className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm"
+              className="rounded-xl border border-gray-200 bg-white p-4"
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0 flex-1">

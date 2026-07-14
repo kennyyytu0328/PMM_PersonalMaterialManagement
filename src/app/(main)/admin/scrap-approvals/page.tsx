@@ -99,7 +99,7 @@ export default function ScrapApprovalsPage() {
           {requests.map((request) => (
             <div
               key={request.id}
-              className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm"
+              className="rounded-xl border border-gray-200 bg-white p-4"
             >
               <Link
                 href={`/assets/${request.asset.id}`}

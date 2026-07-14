@@ -52,7 +52,7 @@ export function AssetEventRow({ event }: { event: AssetEventEntry }) {
   return (
     <Link
       href={`/assets/${event.assetId}`}
-      className="flex items-start gap-3 rounded-xl border border-gray-100 bg-white p-4 shadow-sm"
+      className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4"
     >
       <Badge variant={EVENT_VARIANT[event.type]} className="mt-0.5 shrink-0">
         {tEvents(event.type)}

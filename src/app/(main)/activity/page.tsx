@@ -50,7 +50,7 @@ function TransactionRow({ tx }: { tx: TransactionItem }) {
   const tTypes = useTranslations('activity.types')
 
   return (
-    <div className="flex items-start gap-3 rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
+    <div className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4">
       <Badge variant={TYPE_VARIANT[tx.type]} className="mt-0.5 shrink-0">
         {tTypes(tx.type)}
       </Badge>

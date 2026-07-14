@@ -81,7 +81,7 @@ export default function ProfilePage() {
     <div className="px-4 py-4">
       <h1 className="mb-4 text-lg font-bold text-gray-900">{t('title')}</h1>
 
-      <div className="mb-6 rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
+      <div className="mb-6 rounded-xl border border-gray-200 bg-white p-4">
         <div className="flex items-center gap-3">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-600">
             <User size={24} />
@@ -96,7 +96,7 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
+      <div className="rounded-xl border border-gray-200 bg-white p-4">
         <div className="mb-4 flex items-center gap-2">
           <KeyRound size={20} className="text-gray-600" />
           <h2 className="text-base font-semibold text-gray-900">{t('changePasswordHeader')}</h2>

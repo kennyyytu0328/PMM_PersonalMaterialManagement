@@ -32,7 +32,7 @@ export function ItemCard({
   return (
     <Link
       href={`/items/${id}`}
-      className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition-colors hover:border-blue-200 hover:bg-blue-50/30 active:bg-blue-50"
+      className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-4 transition-colors duration-150 ease-swift hover:border-blue-200 hover:bg-blue-50/30 active:bg-blue-50"
     >
       <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-gray-100 text-gray-400">
         <Package size={20} />
@@ -53,7 +53,7 @@ export function ItemCard({
         </p>
       </div>
       <div className="flex-shrink-0 text-right">
-        <p className="text-sm font-semibold text-gray-900">
+        <p className="text-sm font-semibold text-gray-900 tabular-nums">
           {quantity}
         </p>
         <p className="text-xs text-gray-400">{unit}</p>

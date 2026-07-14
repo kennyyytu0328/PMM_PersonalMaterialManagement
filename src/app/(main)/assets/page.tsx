@@ -152,7 +152,7 @@ export default function AssetsPage() {
             <Link
               key={asset.id}
               href={`/assets/${asset.id}`}
-              className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm transition-colors hover:border-blue-200"
+              className="rounded-xl border border-gray-200 bg-white p-4 transition-colors duration-150 ease-swift hover:border-blue-200"
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0 flex-1">

@@ -31,19 +31,21 @@ export function BottomNav() {
               key={item.href}
               href={item.href}
               className={cn(
-                'flex flex-col items-center py-2 px-2',
+                'group flex flex-col items-center py-2 px-2 transition-colors duration-150 ease-swift',
                 isScan ? 'relative -top-3' : '',
-                isActive ? 'text-blue-600' : 'text-gray-400'
+                isActive ? 'text-blue-600' : 'text-gray-500 hover:text-gray-700'
               )}
             >
               {isScan ? (
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg shadow-blue-600/30">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg shadow-blue-600/30 transition-transform duration-150 ease-swift group-active:scale-95">
                   <item.icon size={24} />
                 </div>
               ) : (
                 <item.icon size={22} />
               )}
-              <span className={cn('text-[10px] mt-1', isScan && 'text-blue-600')}>
+              <span
+                className={cn('text-[10px] mt-1', isActive && 'font-medium', isScan && 'text-blue-600')}
+              >
                 {t(item.key)}
               </span>
             </Link>

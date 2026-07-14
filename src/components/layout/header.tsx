@@ -22,7 +22,7 @@ export function Header() {
           <LanguageSwitcher />
           <Link
             href="/items?search=true"
-            className="text-gray-500 hover:text-gray-700"
+            className="text-gray-500 transition-colors duration-150 ease-swift hover:text-gray-700"
             aria-label={t('search')}
           >
             <Search size={20} />
@@ -30,7 +30,7 @@ export function Header() {
           <div className="relative">
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className="text-gray-500 hover:text-gray-700"
+              className="text-gray-500 transition-colors duration-150 ease-swift hover:text-gray-700"
               aria-label={t('userMenu')}
             >
               <User size={20} />
@@ -38,7 +38,7 @@ export function Header() {
             {menuOpen && (
               <>
                 <div className="fixed inset-0" onClick={() => setMenuOpen(false)} />
-                <div className="absolute right-0 top-8 w-48 rounded-lg border border-gray-200 bg-white py-1 shadow-lg">
+                <div className="animate-surface-in absolute right-0 top-8 w-48 rounded-xl border border-gray-200 bg-white py-1 shadow-lg shadow-gray-950/5">
                   <div className="border-b border-gray-100 px-3 py-2">
                     <p className="text-sm font-medium text-gray-900">{session?.user?.name}</p>
                     <p className="text-xs text-gray-500">{(session?.user as any)?.role}</p>
