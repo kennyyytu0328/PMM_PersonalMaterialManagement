@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "title": "PMM — 個人物料管理",
+    "title": "Stockpile — 個人物料管理",
     "description": "管理倉庫與辦公室的實體物品庫存"
   },
   "nav": {
@@ -12,7 +12,7 @@
     "assets": "財產"
   },
   "header": {
-    "appName": "PMM",
+    "appName": "Stockpile",
     "search": "搜尋",
     "userMenu": "使用者選單",
     "changePassword": "變更密碼",

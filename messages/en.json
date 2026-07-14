@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "title": "PMM - Personal Material Management",
+    "title": "Stockpile - Personal Material Management",
     "description": "Track and manage physical items across warehouse and office"
   },
   "nav": {
@@ -12,7 +12,7 @@
     "assets": "Assets"
   },
   "header": {
-    "appName": "PMM",
+    "appName": "Stockpile",
     "search": "Search",
     "userMenu": "User menu",
     "changePassword": "Change Password",
