@@ -326,7 +326,7 @@
   },
   "scan": {
     "title": "掃描條碼",
-    "subtitle": "將相機對準條碼以查詢物品",
+    "subtitle": "掃描條碼以查詢物品或資產",
     "startingCamera": "啟動相機中...",
     "lookingUp": "查詢條碼中...",
     "supportedFormats": "支援 EAN-13、EAN-8、UPC-A、UPC-E、Code 128、Code 39",
@@ -335,7 +335,14 @@
     "scanAgain": "重新掃描",
     "noItemFound": "找不到物品",
     "addAsNew": "新增為新物品",
-    "skuLabel": "SKU"
+    "skuLabel": "SKU",
+    "retryCamera": "重試",
+    "cameraError": {
+      "denied": "相機存取遭拒。請在瀏覽器設定中允許使用相機後再試一次。",
+      "notFound": "在此裝置上找不到相機。",
+      "insecure": "無法使用相機。此頁面必須透過 HTTPS 連線才能使用掃描功能。",
+      "generic": "無法啟動相機，請再試一次。"
+    }
   },
   "assets": {
     "title": "財產管理",

@@ -326,7 +326,7 @@
   },
   "scan": {
     "title": "Scan Barcode",
-    "subtitle": "Point camera at a barcode to look up an item",
+    "subtitle": "Scan a barcode to find an item or asset",
     "startingCamera": "Starting camera...",
     "lookingUp": "Looking up barcode...",
     "supportedFormats": "Supports EAN-13, EAN-8, UPC-A, UPC-E, Code 128, Code 39",
@@ -335,7 +335,14 @@
     "scanAgain": "Scan again",
     "noItemFound": "No item found",
     "addAsNew": "Add as New Item",
-    "skuLabel": "SKU"
+    "skuLabel": "SKU",
+    "retryCamera": "Try again",
+    "cameraError": {
+      "denied": "Camera access was denied. Please allow camera permission in your browser settings, then try again.",
+      "notFound": "No camera was found on this device.",
+      "insecure": "Camera unavailable. This page must be served over HTTPS to use the scanner.",
+      "generic": "Could not start the camera. Please try again."
+    }
   },
   "assets": {
     "title": "Assets",
