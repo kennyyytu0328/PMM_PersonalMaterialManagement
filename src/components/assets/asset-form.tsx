@@ -25,6 +25,7 @@ export interface AssetFormData {
   cost: string
   vendor: string
   barcode: string
+  serialNo: string
 }
 
 interface AssetFormProps {
@@ -43,6 +44,7 @@ const defaultFormData: AssetFormData = {
   cost: '',
   vendor: '',
   barcode: '',
+  serialNo: '',
 }
 
 export function AssetForm({ assetId, initialData }: AssetFormProps) {
@@ -111,6 +113,7 @@ export function AssetForm({ assetId, initialData }: AssetFormProps) {
       cost: form.cost ? parseFloat(form.cost) : undefined,
       vendor: form.vendor.trim() || undefined,
       barcode: form.barcode.trim() || undefined,
+      serialNo: form.serialNo.trim() || undefined,
     }
 
     try {
@@ -238,6 +241,14 @@ export function AssetForm({ assetId, initialData }: AssetFormProps) {
           placeholder={t('barcodePlaceholder')}
         />
       </div>
+      <Input
+        id="serial-no"
+        label={t('serialNoLabel')}
+        type="text"
+        value={form.serialNo}
+        onChange={(e) => handleChange('serialNo', e.target.value)}
+        placeholder={t('serialNoPlaceholder')}
+      />
       <div className="flex gap-2 pt-2">
         <Button
           type="button"

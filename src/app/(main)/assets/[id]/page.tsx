@@ -45,6 +45,7 @@ interface AssetDetail {
   cost: number | null
   vendor: string | null
   barcode: string | null
+  serialNo: string | null
   scrappedAt: string | null
   scrapReason: string | null
   events: AssetEvent[]
@@ -189,6 +190,7 @@ export default function AssetDetailPage({ params }: { params: Promise<{ id: stri
     ...(asset.cost != null ? ([[t('cost'), formatCurrency(asset.cost)]] as Array<[string, string]>) : []),
     ...(asset.vendor ? ([[t('vendor'), asset.vendor]] as Array<[string, string]>) : []),
     ...(asset.barcode ? ([[t('barcode'), asset.barcode]] as Array<[string, string]>) : []),
+    ...(asset.serialNo ? ([[t('serialNo'), asset.serialNo]] as Array<[string, string]>) : []),
     ...(asset.scrappedAt
       ? ([[t('scrappedAt'), formatDate(asset.scrappedAt)]] as Array<[string, string]>)
       : []),

@@ -33,6 +33,7 @@ export default function EditAssetPage({ params }: { params: Promise<{ id: string
           cost: a.cost != null ? String(a.cost) : '',
           vendor: a.vendor ?? '',
           barcode: a.barcode ?? '',
+          serialNo: a.serialNo ?? '',
         })
       } catch {
         setNotFound(true)
