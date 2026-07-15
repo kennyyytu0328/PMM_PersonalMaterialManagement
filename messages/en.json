@@ -346,7 +346,7 @@
     "nothingReadable": "No readable text — try again with the serial inside the frame",
     "useSerial": "Look up",
     "retake": "Retake",
-    "serialGuideHint": "Align the serial number inside the frame",
+    "serialGuideHint": "Fill the frame with the label text only — keep the device surface out of the frame",
     "addAsNewAsset": "Register as New Asset",
     "cameraError": {
       "denied": "Camera access was denied. Please allow camera permission in your browser settings, then try again.",

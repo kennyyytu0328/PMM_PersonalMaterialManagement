@@ -67,6 +67,21 @@ describe('SerialOcrScanner', () => {
     const ctx = (HTMLCanvasElement.prototype.getContext as ReturnType<typeof vi.fn>).mock
       .results[0]?.value
     expect(ctx.filter).toBe('')
+    // The crop must be a thin 5:1 band derived from WIDTH (portrait phone
+    // streams make height-fraction crops swallow the whole scene, which
+    // empirically zeroes single-line OCR). jsdom video is 0x0 → 640x480
+    // fallback → 512-wide, 102-tall band centered vertically.
+    expect(ctx.drawImage).toHaveBeenCalledWith(
+      expect.anything(),
+      64,
+      189,
+      512,
+      102,
+      0,
+      0,
+      512,
+      102
+    )
   })
 
   it('shows retry state when nothing is recognized', async () => {

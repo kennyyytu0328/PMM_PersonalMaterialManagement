@@ -52,6 +52,9 @@ function SerialOcrCameraSession({ onDetected, onRetry }: SerialOcrCameraSessionP
   const [ocrState, setOcrState] = useState<OcrState>('ready')
   const [text, setText] = useState('')
   const [confidence, setConfidence] = useState(0)
+  // TEMP DEBUG (dev-only, remove after phone OCR diagnosis): what the engine
+  // actually received, plus any swallowed error.
+  const [debug, setDebug] = useState<{ src: string; dims: string; error?: string } | null>(null)
 
   useEffect(() => {
     let mounted = true
@@ -100,13 +103,18 @@ function SerialOcrCameraSession({ onDetected, onRetry }: SerialOcrCameraSessionP
   async function handleCapture() {
     const video = videoRef.current
     setOcrState('recognizing')
+    let canvas: HTMLCanvasElement | null = null
     try {
-      const canvas = document.createElement('canvas')
-      // Crop to the central guide band (80% width, 25% height) for accuracy.
+      canvas = document.createElement('canvas')
+      // Crop to the central guide band: 80% of width, fixed 5:1 aspect. Both
+      // dimensions derive from WIDTH so the band stays a thin text line in
+      // portrait streams too — a height-fraction band on a portrait phone
+      // (1080x1920 → 864x480) swallows the surrounding scene, which
+      // empirically zeroes single-line OCR (PSM 7) even on a legible label.
       const vw = video?.videoWidth || 640
       const vh = video?.videoHeight || 480
       const cw = Math.round(vw * 0.8)
-      const ch = Math.round(vh * 0.25)
+      const ch = Math.round(cw / 5)
       canvas.width = cw
       canvas.height = ch
       const ctx = canvas.getContext('2d')
@@ -117,6 +125,9 @@ function SerialOcrCameraSession({ onDetected, onRetry }: SerialOcrCameraSessionP
         // against a production label photo); tesseract grayscales internally.
         ctx.drawImage(video, (vw - cw) / 2, (vh - ch) / 2, cw, ch, 0, 0, cw, ch)
       }
+      if (process.env.NODE_ENV === 'development' && canvas) {
+        setDebug({ src: canvas.toDataURL('image/png'), dims: `video ${vw}x${vh} → crop ${cw}x${ch}` })
+      }
       const result = await recognizeSerial(canvas)
       if (result.text) {
         setText(result.text)
@@ -125,7 +136,14 @@ function SerialOcrCameraSession({ onDetected, onRetry }: SerialOcrCameraSessionP
       } else {
         setOcrState('empty')
       }
-    } catch {
+    } catch (err) {
+      if (process.env.NODE_ENV === 'development') {
+        setDebug((prev) => ({
+          src: prev?.src ?? '',
+          dims: prev?.dims ?? 'no canvas',
+          error: err instanceof Error ? `${err.name}: ${err.message}` : String(err),
+        }))
+      }
       setOcrState('empty')
     }
   }
@@ -147,10 +165,16 @@ function SerialOcrCameraSession({ onDetected, onRetry }: SerialOcrCameraSessionP
       <div className="relative overflow-hidden rounded-xl bg-black">
         <video ref={videoRef} playsInline muted className="w-full" />
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <div className="h-1/4 w-4/5 rounded-lg border-2 border-white/80 shadow-[0_0_0_9999px_rgba(0,0,0,0.4)]" />
+          {/* Must mirror the capture crop: 80% width, 5:1 aspect (see handleCapture).
+              The hint is absolutely positioned off the box so it cannot shift the
+              box away from the video center the crop is taken from. */}
+          <div className="relative aspect-[5/1] w-4/5 rounded-lg border-2 border-white/80 shadow-[0_0_0_9999px_rgba(0,0,0,0.4)]">
+            <p className="absolute inset-x-0 top-full mt-3 px-4 text-center text-sm font-medium text-white drop-shadow-md">
+              {t('serialGuideHint')}
+            </p>
+          </div>
         </div>
       </div>
-      <p className="text-center text-xs text-gray-400">{t('serialGuideHint')}</p>
 
       {(ocrState === 'ready' || ocrState === 'recognizing') && (
         <Button className="w-full" onClick={handleCapture} disabled={ocrState === 'recognizing'}>
@@ -186,6 +210,20 @@ function SerialOcrCameraSession({ onDetected, onRetry }: SerialOcrCameraSessionP
           <Button variant="secondary" className="w-full" onClick={() => setOcrState('ready')}>
             {t('retake')}
           </Button>
+        </div>
+      )}
+
+      {/* TEMP DEBUG (dev-only, remove after phone OCR diagnosis) */}
+      {process.env.NODE_ENV === 'development' && debug && ocrState !== 'recognizing' && (
+        <div className="space-y-1 rounded-xl border border-purple-300 bg-purple-50 p-2 text-left">
+          <p className="font-mono text-[10px] text-purple-900">DEBUG {debug.dims}</p>
+          {debug.error && (
+            <p className="font-mono text-[10px] text-red-700 break-all">ERR: {debug.error}</p>
+          )}
+          {debug.src && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={debug.src} alt="captured crop" className="w-full border border-purple-200" />
+          )}
         </div>
       )}
     </div>
