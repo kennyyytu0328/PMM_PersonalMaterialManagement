@@ -68,3 +68,7 @@ CLAUDE.md
 
 # OS
 *.log
+
+# OCR runtime assets (generated from node_modules; committed traineddata stays)
+/public/ocr/worker.min.js
+/public/ocr/core/
