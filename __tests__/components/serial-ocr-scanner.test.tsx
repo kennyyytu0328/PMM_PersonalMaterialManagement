@@ -51,6 +51,24 @@ describe('SerialOcrScanner', () => {
     expect(onDetected).toHaveBeenCalledWith('SN-EDITED')
   })
 
+  it('requests high-resolution camera and feeds an unfiltered crop to OCR', async () => {
+    renderScanner()
+    await userEvent.click(await screen.findByRole('button', { name: en.scan.capture }))
+    // Low default camera resolution (~640x480) makes the OCR crop unreadable.
+    expect(navigator.mediaDevices.getUserMedia).toHaveBeenCalledWith({
+      video: {
+        facingMode: 'environment',
+        width: { ideal: 1920 },
+        height: { ideal: 1080 },
+      },
+    })
+    // A grayscale/contrast canvas filter empirically zeroes OCR confidence on
+    // real labels — the crop must reach the engine unfiltered.
+    const ctx = (HTMLCanvasElement.prototype.getContext as ReturnType<typeof vi.fn>).mock
+      .results[0]?.value
+    expect(ctx.filter).toBe('')
+  })
+
   it('shows retry state when nothing is recognized', async () => {
     recognizeSerialMock.mockResolvedValue({ text: '', confidence: 0 })
     renderScanner()

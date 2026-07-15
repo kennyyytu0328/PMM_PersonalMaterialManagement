@@ -63,7 +63,13 @@ function SerialOcrCameraSession({ onDetected, onRetry }: SerialOcrCameraSessionP
       }
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: 'environment' },
+          // 1080p ideal: default camera resolution (~640x480) leaves the crop
+          // band too few pixels for reliable OCR (verified empirically).
+          video: {
+            facingMode: 'environment',
+            width: { ideal: 1920 },
+            height: { ideal: 1080 },
+          },
         })
         if (!mounted) {
           stream.getTracks().forEach((track) => track.stop())
@@ -105,7 +111,10 @@ function SerialOcrCameraSession({ onDetected, onRetry }: SerialOcrCameraSessionP
       canvas.height = ch
       const ctx = canvas.getContext('2d')
       if (ctx && video) {
-        ctx.filter = 'grayscale(1) contrast(1.4)'
+        // Feed the raw crop — no grayscale/contrast preprocessing. A CSS-style
+        // contrast(1.4) filter clips detail the LSTM engine needs and drops
+        // recognition from ~89 confidence to zero on real labels (verified
+        // against a production label photo); tesseract grayscales internally.
         ctx.drawImage(video, (vw - cw) / 2, (vh - ch) / 2, cw, ch, 0, 0, cw, ch)
       }
       const result = await recognizeSerial(canvas)
