@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Third-party tesseract.js-core build artifacts copied into public/ by
+    // scripts/copy-ocr-assets.mjs (gitignored, generated on postinstall).
+    "public/ocr/**",
   ]),
 ]);
 
