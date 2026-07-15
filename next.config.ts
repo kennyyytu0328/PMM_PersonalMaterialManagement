@@ -8,6 +8,9 @@ const nextConfig: NextConfig = {
   // Set at build time for sub-path deployments (e.g. "/gogoffcc-pmm").
   // Undefined locally → root-path behavior unchanged.
   basePath: process.env.NEXT_PUBLIC_BASE_PATH || undefined,
+  // Dev-only: allow LAN devices (phone camera testing over HTTPS) to load
+  // dev-server internals (/_next assets, HMR websocket) without 403s.
+  allowedDevOrigins: ['192.168.2.175', '192.168.2.*'],
 }
 
 export default withNextIntl(nextConfig)
