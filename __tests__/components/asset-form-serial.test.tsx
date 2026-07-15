@@ -14,6 +14,11 @@ vi.mock('@/lib/api', () => ({
     json: async () => ({ success: true, data: [] }),
   })),
 }))
+vi.mock('@/components/scanner/serial-ocr-scanner', () => ({
+  SerialOcrScanner: ({ onDetected }: { onDetected: (t: string) => void }) => (
+    <button onClick={() => onDetected('SN-FROM-CAMERA')}>mock-detect</button>
+  ),
+}))
 
 function renderForm(initialData?: Record<string, string>) {
   return render(
@@ -34,5 +39,12 @@ describe('AssetForm serial number field', () => {
   it('pre-fills from initialData', async () => {
     renderForm({ serialNo: 'SN-FROM-OCR' })
     expect(await screen.findByLabelText(en.assetForm.serialNoLabel)).toHaveValue('SN-FROM-OCR')
+  })
+
+  it('fills the serial field from OCR capture', async () => {
+    renderForm()
+    await userEvent.click(await screen.findByRole('button', { name: en.assetForm.scanSerial }))
+    await userEvent.click(await screen.findByRole('button', { name: 'mock-detect' }))
+    expect(screen.getByLabelText(en.assetForm.serialNoLabel)).toHaveValue('SN-FROM-CAMERA')
   })
 })

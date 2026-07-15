@@ -3,10 +3,13 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
+import { Camera } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
+import { Modal } from '@/components/ui/modal'
 import { useToast } from '@/components/ui/toast'
+import { SerialOcrScanner } from '@/components/scanner/serial-ocr-scanner'
 import { apiFetch } from '@/lib/api'
 
 interface Option {
@@ -56,6 +59,7 @@ export function AssetForm({ assetId, initialData }: AssetFormProps) {
   const [locations, setLocations] = useState<Option[]>([])
   const [people, setPeople] = useState<Option[]>([])
   const [submitting, setSubmitting] = useState(false)
+  const [showOcr, setShowOcr] = useState(false)
   const [form, setForm] = useState<AssetFormData>({ ...defaultFormData, ...initialData })
 
   useEffect(() => {
@@ -241,14 +245,36 @@ export function AssetForm({ assetId, initialData }: AssetFormProps) {
           placeholder={t('barcodePlaceholder')}
         />
       </div>
-      <Input
-        id="serial-no"
-        label={t('serialNoLabel')}
-        type="text"
-        value={form.serialNo}
-        onChange={(e) => handleChange('serialNo', e.target.value)}
-        placeholder={t('serialNoPlaceholder')}
-      />
+      <div className="flex items-end gap-2">
+        <div className="flex-1">
+          <Input
+            id="serial-no"
+            label={t('serialNoLabel')}
+            type="text"
+            value={form.serialNo}
+            onChange={(e) => handleChange('serialNo', e.target.value)}
+            placeholder={t('serialNoPlaceholder')}
+          />
+        </div>
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={() => setShowOcr(true)}
+          aria-label={t('scanSerial')}
+        >
+          <Camera size={16} />
+        </Button>
+      </div>
+
+      <Modal open={showOcr} onClose={() => setShowOcr(false)} title={t('scanSerialTitle')}>
+        <SerialOcrScanner
+          onDetected={(text) => {
+            handleChange('serialNo', text)
+            setShowOcr(false)
+          }}
+        />
+      </Modal>
+
       <div className="flex gap-2 pt-2">
         <Button
           type="button"

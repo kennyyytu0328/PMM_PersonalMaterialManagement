@@ -399,6 +399,8 @@
     "barcodePlaceholder": "掃描或輸入條碼",
     "serialNoLabel": "序號",
     "serialNoPlaceholder": "設備序號（選填）",
+    "scanSerial": "以相機掃描序號",
+    "scanSerialTitle": "掃描序號",
     "nameRequired": "請輸入名稱",
     "createdSuccess": "財產已入帳",
     "updatedSuccess": "財產已更新",

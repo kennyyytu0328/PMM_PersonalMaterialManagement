@@ -399,6 +399,8 @@
     "barcodePlaceholder": "Scan or type barcode",
     "serialNoLabel": "Serial No.",
     "serialNoPlaceholder": "Device serial number (optional)",
+    "scanSerial": "Scan serial number with camera",
+    "scanSerialTitle": "Scan Serial Number",
     "nameRequired": "Name is required",
     "createdSuccess": "Asset registered",
     "updatedSuccess": "Asset updated",
