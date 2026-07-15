@@ -73,6 +73,7 @@ export const createAssetSchema = z.object({
   cost: z.number().min(0).optional(),
   vendor: z.string().max(200).optional(),
   barcode: z.string().max(100).optional(),
+  serialNo: z.string().max(120).optional(),
 })
 
 export const updateAssetSchema = createAssetSchema.partial()

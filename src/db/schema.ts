@@ -89,6 +89,7 @@ export const assets = sqliteTable('assets', {
   cost: real('cost'),
   vendor: text('vendor'),
   barcode: text('barcode'),
+  serialNo: text('serial_no'),
   imageUrl: text('image_url'),
   scrappedAt: text('scrapped_at'),
   scrapReason: text('scrap_reason'),

@@ -75,6 +75,25 @@ describe('createAssetSchema', () => {
   })
 })
 
+describe('createAssetSchema serialNo', () => {
+  it('accepts a valid serial number', () => {
+    const result = createAssetSchema.safeParse({ name: 'Laptop', serialNo: 'SN-2026-00042' })
+    expect(result.success).toBe(true)
+    if (result.success) expect(result.data.serialNo).toBe('SN-2026-00042')
+  })
+
+  it('accepts payload without serialNo', () => {
+    const result = createAssetSchema.safeParse({ name: 'Laptop' })
+    expect(result.success).toBe(true)
+    if (result.success) expect(result.data.serialNo).toBeUndefined()
+  })
+
+  it('rejects serialNo longer than 120 chars', () => {
+    const result = createAssetSchema.safeParse({ name: 'Laptop', serialNo: 'X'.repeat(121) })
+    expect(result.success).toBe(false)
+  })
+})
+
 describe('transferAssetSchema', () => {
   it('requires custodianId', () => {
     expect(transferAssetSchema.safeParse({}).success).toBe(false)
