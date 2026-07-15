@@ -4,7 +4,9 @@
   "private": true,
   "packageManager": "pnpm@10.33.2",
   "scripts": {
+    "predev": "node scripts/copy-ocr-assets.mjs",
     "dev": "next dev",
+    "prebuild": "node scripts/copy-ocr-assets.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
@@ -14,7 +16,7 @@
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
     "seed": "tsx scripts/seed.ts",
-    "postinstall": "node scripts/copy-ocr-assets.mjs"
+    "ocr:assets": "node scripts/copy-ocr-assets.mjs"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.1",
