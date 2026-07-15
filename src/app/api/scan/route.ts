@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
     const code = barcode ?? sku
     if (code) {
       const asset = await db.query.assets.findFirst({
-        where: or(eq(assets.barcode, code), eq(assets.assetNo, code)),
+        where: or(eq(assets.barcode, code), eq(assets.assetNo, code), eq(assets.serialNo, code)),
         with: { category: true, location: true, custodian: true },
       })
       if (asset) {
