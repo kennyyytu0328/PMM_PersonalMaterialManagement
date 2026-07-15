@@ -4,14 +4,16 @@ import { useState, useCallback } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
-import { ScanLine, Package, Plus, RotateCcw } from 'lucide-react'
+import { ScanLine, Package, Plus, RotateCcw, Barcode, TextCursorInput } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Loading } from '@/components/ui/loading'
+import { ContentTabs } from '@/components/ui/content-tabs'
 import { apiFetch } from '@/lib/api'
 
 type ScanState = 'scanning' | 'loading' | 'found' | 'not-found'
+type ScanMode = 'barcode' | 'serial'
 
 interface FoundItem {
   id: number
@@ -29,10 +31,16 @@ const BarcodeScanner = dynamic(
   { ssr: false, loading: () => <Loading /> }
 )
 
+const SerialOcrScanner = dynamic(
+  () => import('@/components/scanner/serial-ocr-scanner').then((m) => m.SerialOcrScanner),
+  { ssr: false, loading: () => <Loading /> }
+)
+
 export default function ScanPage() {
   const t = useTranslations('scan')
   const router = useRouter()
   const [state, setState] = useState<ScanState>('scanning')
+  const [mode, setMode] = useState<ScanMode>('barcode')
   const [scannedBarcode, setScannedBarcode] = useState('')
   const [foundItem, setFoundItem] = useState<FoundItem | null>(null)
 
@@ -67,6 +75,13 @@ export default function ScanPage() {
     setState('scanning')
   }
 
+  function handleModeChange(next: ScanMode) {
+    setMode(next)
+    setFoundItem(null)
+    setScannedBarcode('')
+    setState('scanning')
+  }
+
   const isLowStock =
     foundItem?.minQuantity != null && foundItem.quantity <= foundItem.minQuantity
 
@@ -79,18 +94,33 @@ export default function ScanPage() {
 
       {(state === 'scanning' || state === 'loading') && (
         <div className="space-y-4">
-          <div className="overflow-hidden rounded-xl border border-gray-200 bg-black">
-            {state === 'scanning' && <BarcodeScanner onScan={handleScan} />}
-            {state === 'loading' && (
+          <ContentTabs
+            tabs={[
+              { key: 'barcode', icon: Barcode, label: t('modeBarcode') },
+              { key: 'serial', icon: TextCursorInput, label: t('modeSerial') },
+            ]}
+            active={mode}
+            onChange={handleModeChange}
+          />
+          {state === 'loading' && (
+            <div className="overflow-hidden rounded-xl border border-gray-200 bg-black">
               <div className="flex h-48 items-center justify-center">
                 <Loading text={t('lookingUp')} />
               </div>
-            )}
-          </div>
-          <p className="text-center text-xs text-gray-400">
-            <ScanLine size={14} className="inline mr-1" />
-            {t('supportedFormats')}
-          </p>
+            </div>
+          )}
+          {state === 'scanning' && mode === 'barcode' && (
+            <div className="overflow-hidden rounded-xl border border-gray-200 bg-black">
+              <BarcodeScanner onScan={handleScan} />
+            </div>
+          )}
+          {state === 'scanning' && mode === 'serial' && <SerialOcrScanner onDetected={handleScan} />}
+          {mode === 'barcode' && (
+            <p className="text-center text-xs text-gray-400">
+              <ScanLine size={14} className="inline mr-1" />
+              {t('supportedFormats')}
+            </p>
+          )}
         </div>
       )}
 
@@ -141,12 +171,21 @@ export default function ScanPage() {
           </div>
 
           <div className="flex gap-2">
-            <Link href={`/items/new?barcode=${encodeURIComponent(scannedBarcode)}`} className="flex-1">
-              <Button className="w-full">
-                <Plus size={16} className="mr-1" />
-                {t('addAsNew')}
-              </Button>
-            </Link>
+            {mode === 'serial' ? (
+              <Link href={`/assets/new?serialNo=${encodeURIComponent(scannedBarcode)}`} className="flex-1">
+                <Button className="w-full">
+                  <Plus size={16} className="mr-1" />
+                  {t('addAsNewAsset')}
+                </Button>
+              </Link>
+            ) : (
+              <Link href={`/items/new?barcode=${encodeURIComponent(scannedBarcode)}`} className="flex-1">
+                <Button className="w-full">
+                  <Plus size={16} className="mr-1" />
+                  {t('addAsNew')}
+                </Button>
+              </Link>
+            )}
             <Button variant="secondary" onClick={handleScanAgain} aria-label={t('scanAgain')}>
               <RotateCcw size={16} />
             </Button>
