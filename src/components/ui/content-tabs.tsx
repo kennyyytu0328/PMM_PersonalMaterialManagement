@@ -19,17 +19,17 @@ export function ContentTabs<K extends string>({
   onChange: (key: K) => void
 }) {
   return (
-    <div className="mb-4 flex gap-1 border-b border-gray-200">
+    <div className="mb-4 flex gap-2">
       {tabs.map(({ key, icon: Icon, label }) => (
         <button
           key={key}
           type="button"
           onClick={() => onChange(key)}
           className={cn(
-            '-mb-px flex items-center gap-1.5 whitespace-nowrap border-b-2 px-3 py-2 text-sm font-medium transition-colors duration-150 ease-swift',
+            'flex items-center gap-1.5 whitespace-nowrap rounded-full border px-4 py-2 text-sm font-medium transition-colors duration-150 ease-swift',
             active === key
-              ? 'border-blue-600 text-blue-600'
-              : 'border-transparent text-gray-500 hover:text-gray-700'
+              ? 'border-teal-ink bg-teal-ink text-white'
+              : 'border-mist bg-white text-pewter hover:text-charcoal'
           )}
         >
           <Icon size={16} />
