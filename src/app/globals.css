@@ -1,25 +1,47 @@
 @import "tailwindcss";
 
 :root {
-  --background: oklch(0.985 0.004 250);
-  --foreground: oklch(0.21 0.015 265);
+  --background: #f1f4ec;
+  --foreground: #212529;
 }
 
 @theme {
   --ease-swift: cubic-bezier(0.05, 0.7, 0.1, 1);
+
+  /* Go Go Fresh brand tokens */
+  --color-teal-ink: #0a5c58;
+  --color-teal-deep: #084a47;
+  --color-teal: #14867f;
+  --color-teal-soft: #2ab5ae;
+  --color-lime: #a5cd39;
+  --color-navy: #1b3f74;
+  --color-canvas: #f1f4ec;
+  --color-sky-card: #bfdeea;
+  --color-sage-card: #dfecc8;
+  --color-aqua-card: #cdeae6;
+  --color-ash-card: #efefef;
+  --color-peach-card: #fceace;
+  --color-charcoal: #212529;
+  --color-pewter: #6d6d6d;
+  --color-mist: #c8d6cf;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-inter);
   --font-mono: var(--font-geist-mono);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  font-family:
+    var(--font-inter),
+    var(--font-noto-sans-tc),
+    ui-sans-serif,
+    system-ui,
+    sans-serif;
 }
 
 h1,
@@ -29,7 +51,7 @@ h3 {
 }
 
 ::selection {
-  background: oklch(0.9 0.05 255);
+  background: #cdeae6;
 }
 
 @keyframes surface-in {
