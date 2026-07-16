@@ -20,13 +20,13 @@ export function LanguageSwitcher() {
   }
 
   return (
-    <label className="flex items-center gap-1 text-gray-500" aria-label={t('language')}>
+    <label className="flex items-center gap-1 text-white/70" aria-label={t('language')}>
       <Languages size={18} />
       <select
         value={currentLocale}
         onChange={handleChange}
         disabled={isPending}
-        className="bg-transparent text-sm outline-none disabled:opacity-50"
+        className="bg-transparent text-sm text-white outline-none disabled:opacity-50 [&>option]:text-charcoal"
       >
         {locales.map((locale) => (
           <option key={locale} value={locale}>

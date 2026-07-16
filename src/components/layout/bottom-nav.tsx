@@ -20,7 +20,7 @@ export function BottomNav() {
   const t = useTranslations('nav')
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-gray-200 bg-white pb-safe">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-teal-ink pb-safe">
       <div className="mx-auto flex max-w-md items-center justify-around">
         {navItems.map((item) => {
           const isActive = pathname.startsWith(item.href)
@@ -33,18 +33,18 @@ export function BottomNav() {
               className={cn(
                 'group flex flex-col items-center py-2 px-2 transition-colors duration-150 ease-swift',
                 isScan ? 'relative -top-3' : '',
-                isActive ? 'text-blue-600' : 'text-gray-500 hover:text-gray-700'
+                isActive ? 'text-lime' : 'text-white/65 hover:text-white'
               )}
             >
               {isScan ? (
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg shadow-blue-600/30 transition-transform duration-150 ease-swift group-active:scale-95">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-lime text-teal-ink transition-transform duration-150 ease-swift group-active:scale-95">
                   <item.icon size={24} />
                 </div>
               ) : (
                 <item.icon size={22} />
               )}
               <span
-                className={cn('text-[10px] mt-1', isActive && 'font-medium', isScan && 'text-blue-600')}
+                className={cn('text-[10px] mt-1', isActive && 'font-medium', isScan && 'text-lime')}
               >
                 {t(item.key)}
               </span>
