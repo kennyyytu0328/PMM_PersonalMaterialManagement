@@ -18,10 +18,10 @@ export function Header() {
       <div className="flex items-center justify-between px-4 py-3">
         <Link href="/dashboard" aria-label={t('appName')} className="flex items-center">
           <Image
-            src="/gogo_fresh_transparent.png"
+            src="/gogo_fresh_mark.png"
             alt={t('appName')}
             width={120}
-            height={53}
+            height={79}
             priority
             className="h-9 w-auto"
           />

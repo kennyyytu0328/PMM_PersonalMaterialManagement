@@ -33,7 +33,7 @@ export function BottomNav() {
               className={cn(
                 'group flex flex-col items-center py-2 px-2 transition-colors duration-150 ease-swift',
                 isScan ? 'relative -top-3' : '',
-                isActive ? 'text-lime' : 'text-white/65 hover:text-white'
+                isActive ? 'text-lime' : 'text-white/70 hover:text-white'
               )}
             >
               {isScan ? (
