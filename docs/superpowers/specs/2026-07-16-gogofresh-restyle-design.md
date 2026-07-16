@@ -54,9 +54,8 @@ feel); cards `rounded-[20px]`; modals `rounded-[24px]`; dropdown menus `rounded-
 ## 2. Layout Chrome & Login
 
 - **Header** (`src/components/layout/header.tsx`): solid `teal-ink` band, no bottom border.
-  Brand mark: `public/gogo_fresh.png` (transparent — **user will provide**) at ~32px height
-  via `next/image`. Until the file exists, render a fallback white "Go Go Fresh" wordmark with
-  a lime "!" (component checks/props for asset presence; a one-line swap later). Search + user
+  Brand mark: `public/gogo_fresh_transparent.png` (provided) at ~32px height via
+  `next/image`. Search + user
   icons white/70, white on hover. User dropdown: white card, 20px radius, border, no shadow;
   sign-out row stays red.
 - **Bottom nav** (`src/components/layout/bottom-nav.tsx`): `teal-ink` band. Inactive items
@@ -106,8 +105,7 @@ feel); cards `rounded-[20px]`; modals `rounded-[24px]`; dropdown menus `rounded-
 
 ## 5. Error Handling, Testing, Verification
 
-- Only new logic: Card `surface` prop + header logo fallback (wordmark renders if
-  `public/gogo_fresh.png` absent — nothing breaks before the asset arrives).
+- Only new logic: Card `surface` prop.
 - `pnpm test` stays green; if a test asserts a changed class, check the test's intent before
   updating it.
 - `pnpm lint` and `pnpm build` must pass.
@@ -125,6 +123,6 @@ feel); cards `rounded-[20px]`; modals `rounded-[24px]`; dropdown menus `rounded-
 
 - Teal structural + lime accent mapping — user approved (recommended option).
 - Sans-only typography (Inter + Noto Sans TC) — user chose over serif pairing.
-- Transparent logo PNG to be provided by user; fallback wordmark until then.
+- Transparent logo provided at `public/gogo_fresh_transparent.png` (2026-07-16).
 - Approach B: full Arva restructure in one pass — user approved.
 - Celadon-cream canvas `#f1f4ec` (vs Arva warm bone) and strict no-shadow rule — user approved.
