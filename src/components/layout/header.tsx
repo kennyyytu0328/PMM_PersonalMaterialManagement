@@ -16,14 +16,18 @@ export function Header() {
   return (
     <header className="sticky top-0 z-30 bg-teal-ink">
       <div className="flex items-center justify-between px-4 py-3">
-        <Link href="/dashboard" aria-label={t('appName')} className="flex items-center">
+        <Link
+          href="/dashboard"
+          aria-label={t('appName')}
+          className="flex items-center rounded-full bg-white px-2.5 py-1"
+        >
           <Image
             src="/gogo_fresh_mark.png"
             alt={t('appName')}
             width={120}
             height={79}
             priority
-            className="h-9 w-auto"
+            className="h-7 w-auto"
           />
         </Link>
         <div className="flex items-center gap-3">
