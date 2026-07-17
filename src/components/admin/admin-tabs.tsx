@@ -27,7 +27,7 @@ export function AdminTabs() {
             key={tab.href}
             href={tab.href}
             className={cn(
-              'flex items-center gap-1.5 whitespace-nowrap rounded-full border px-4 py-2 text-sm font-medium transition-colors',
+              'flex items-center gap-1.5 whitespace-nowrap rounded-full border px-4 py-2 text-sm font-medium transition-colors duration-150 ease-swift',
               isActive
                 ? 'border-teal-ink bg-teal-ink text-white'
                 : 'border-mist bg-white text-pewter hover:text-charcoal'

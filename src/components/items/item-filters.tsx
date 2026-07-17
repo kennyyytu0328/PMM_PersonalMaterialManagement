@@ -61,7 +61,7 @@ export function ItemFilters({
         <select
           value={categoryId}
           onChange={(e) => onCategoryChange(e.target.value)}
-          className="rounded-full border border-mist px-3 py-1.5 text-xs focus:border-teal focus:outline-none focus:ring-1 focus:ring-teal"
+          className="rounded-full border border-mist px-3 py-2 text-sm focus:border-teal focus:outline-none focus:ring-1 focus:ring-teal"
         >
           <option value="">{t('allCategories')}</option>
           {categories.map((c) => (
@@ -74,7 +74,7 @@ export function ItemFilters({
         <select
           value={locationId}
           onChange={(e) => onLocationChange(e.target.value)}
-          className="rounded-full border border-mist px-3 py-1.5 text-xs focus:border-teal focus:outline-none focus:ring-1 focus:ring-teal"
+          className="rounded-full border border-mist px-3 py-2 text-sm focus:border-teal focus:outline-none focus:ring-1 focus:ring-teal"
         >
           <option value="">{t('allLocations')}</option>
           {locations.map((l) => (
@@ -87,7 +87,7 @@ export function ItemFilters({
         <button
           onClick={() => onLowStockChange(!lowStockOnly)}
           className={cn(
-            'flex-shrink-0 rounded-full border px-4 py-2 text-sm font-medium transition-colors',
+            'flex-shrink-0 rounded-full border px-4 py-2 text-sm font-medium transition-colors duration-150 ease-swift',
             lowStockOnly
               ? 'border-teal-ink bg-teal-ink text-white'
               : 'border-mist bg-white text-pewter hover:text-charcoal'

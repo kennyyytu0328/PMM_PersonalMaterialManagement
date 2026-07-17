@@ -161,7 +161,7 @@ export function ItemForm({ itemId, initialData, defaultBarcode }: ItemFormProps)
           onChange={(e) => handleChange('description', e.target.value)}
           placeholder={t('descriptionPlaceholder')}
           rows={3}
-          className="block w-full rounded-full border border-mist px-3 py-2 text-sm placeholder:text-pewter/70 focus:border-teal focus:outline-none focus:ring-1 focus:ring-teal"
+          className="block w-full rounded-[20px] border border-mist px-3 py-2 text-sm placeholder:text-pewter/70 focus:border-teal focus:outline-none focus:ring-1 focus:ring-teal"
         />
       </div>
       <Input
