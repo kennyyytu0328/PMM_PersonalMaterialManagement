@@ -88,8 +88,8 @@ export default function ScanPage() {
   return (
     <div className="mx-auto max-w-2xl space-y-4 px-4 py-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
-        <p className="mt-1 text-sm text-gray-500">{t('subtitle')}</p>
+        <h1 className="text-2xl font-bold text-charcoal">{t('title')}</h1>
+        <p className="mt-1 text-sm text-pewter">{t('subtitle')}</p>
       </div>
 
       {(state === 'scanning' || state === 'loading') && (
@@ -103,20 +103,20 @@ export default function ScanPage() {
             onChange={handleModeChange}
           />
           {state === 'loading' && (
-            <div className="overflow-hidden rounded-xl border border-gray-200 bg-black">
+            <div className="overflow-hidden rounded-[20px] border border-mist bg-black">
               <div className="flex h-48 items-center justify-center">
                 <Loading text={t('lookingUp')} />
               </div>
             </div>
           )}
           {state === 'scanning' && mode === 'barcode' && (
-            <div className="overflow-hidden rounded-xl border border-gray-200 bg-black">
+            <div className="overflow-hidden rounded-[20px] border border-mist bg-black">
               <BarcodeScanner onScan={handleScan} />
             </div>
           )}
           {state === 'scanning' && mode === 'serial' && <SerialOcrScanner onDetected={handleScan} />}
           {mode === 'barcode' && (
-            <p className="text-center text-xs text-gray-400">
+            <p className="text-center text-xs text-pewter/70">
               <ScanLine size={14} className="inline mr-1" />
               {t('supportedFormats')}
             </p>
@@ -126,26 +126,26 @@ export default function ScanPage() {
 
       {state === 'found' && foundItem && (
         <div className="space-y-4">
-          <div className="rounded-xl border border-green-200 bg-green-50 p-4">
+          <div className="rounded-[20px] border border-green-200 bg-green-50 p-4">
             <div className="flex items-start gap-3">
-              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-600">
+              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-green-100 text-teal">
                 <Package size={20} />
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
-                  <p className="font-semibold text-gray-900">{foundItem.name}</p>
+                  <p className="font-semibold text-charcoal">{foundItem.name}</p>
                   {isLowStock && <Badge variant="warning">{t('lowStockBadge')}</Badge>}
                 </div>
-                <p className="text-xs text-gray-500">{t('skuLabel')}: {foundItem.sku}</p>
+                <p className="text-xs text-pewter">{t('skuLabel')}: {foundItem.sku}</p>
                 {foundItem.category && (
-                  <p className="text-xs text-gray-500">{foundItem.category.name}</p>
+                  <p className="text-xs text-pewter">{foundItem.category.name}</p>
                 )}
                 {foundItem.location && (
-                  <p className="text-xs text-gray-500">{foundItem.location.name}</p>
+                  <p className="text-xs text-pewter">{foundItem.location.name}</p>
                 )}
-                <p className="mt-2 text-lg font-bold text-gray-900">
+                <p className="mt-2 text-lg font-bold text-charcoal">
                   {foundItem.quantity}{' '}
-                  <span className="text-sm font-normal text-gray-500">{foundItem.unit}</span>
+                  <span className="text-sm font-normal text-pewter">{foundItem.unit}</span>
                 </p>
               </div>
             </div>
@@ -164,10 +164,10 @@ export default function ScanPage() {
 
       {state === 'not-found' && (
         <div className="space-y-4">
-          <div className="rounded-xl border border-yellow-200 bg-yellow-50 p-4 text-center">
+          <div className="rounded-[20px] border border-yellow-200 bg-yellow-50 p-4 text-center">
             <ScanLine size={32} className="mx-auto mb-2 text-yellow-500" />
-            <p className="font-medium text-gray-900">{t('noItemFound')}</p>
-            <p className="mt-1 text-sm text-gray-500 font-mono">{scannedBarcode}</p>
+            <p className="font-medium text-charcoal">{t('noItemFound')}</p>
+            <p className="mt-1 text-sm text-pewter font-mono">{scannedBarcode}</p>
           </div>
 
           <div className="flex gap-2">

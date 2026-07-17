@@ -109,7 +109,7 @@ export function CheckoutModal({ open, onClose, itemId, itemName, onSuccess }: Ch
 
   return (
     <Modal open={open} onClose={onClose} title={t('title')}>
-      <p className="mb-4 text-sm text-gray-500">{itemName}</p>
+      <p className="mb-4 text-sm text-pewter">{itemName}</p>
       <form onSubmit={handleSubmit} className="space-y-4">
         <Select
           id="userId"

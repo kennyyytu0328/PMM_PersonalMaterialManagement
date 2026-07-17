@@ -19,7 +19,7 @@ export function AdminTabs() {
   const t = useTranslations('admin.tabs')
 
   return (
-    <div className="flex gap-1 overflow-x-auto border-b border-gray-200 px-4 pt-3 pb-0">
+    <div className="flex gap-2 overflow-x-auto border-b border-mist px-4 pt-3 pb-3">
       {tabs.map((tab) => {
         const isActive = pathname.startsWith(tab.href)
         return (
@@ -27,10 +27,10 @@ export function AdminTabs() {
             key={tab.href}
             href={tab.href}
             className={cn(
-              'flex items-center gap-1.5 whitespace-nowrap rounded-t-lg px-3 py-2 text-sm font-medium transition-colors',
+              'flex items-center gap-1.5 whitespace-nowrap rounded-full border px-4 py-2 text-sm font-medium transition-colors',
               isActive
-                ? 'border-b-2 border-blue-600 text-blue-600'
-                : 'text-gray-500 hover:text-gray-700'
+                ? 'border-teal-ink bg-teal-ink text-white'
+                : 'border-mist bg-white text-pewter hover:text-charcoal'
             )}
           >
             <tab.icon size={16} />

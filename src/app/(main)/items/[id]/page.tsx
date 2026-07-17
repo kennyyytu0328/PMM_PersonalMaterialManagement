@@ -137,11 +137,11 @@ export default function ItemDetailPage({ params }: { params: Promise<{ id: strin
     <div className="mx-auto max-w-2xl space-y-4 px-4 py-6">
       <div className="flex items-center gap-3">
         <Link href="/items">
-          <button className="rounded-full p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600">
+          <button className="rounded-full p-1.5 text-pewter/70 hover:bg-ash-card hover:text-pewter">
             <ArrowLeft size={20} />
           </button>
         </Link>
-        <h1 className="flex-1 truncate text-xl font-bold text-gray-900">{item.name}</h1>
+        <h1 className="flex-1 truncate text-xl font-bold text-charcoal">{item.name}</h1>
         {canEdit && (
           <Link href={`/items/${id}/edit`}>
             <Button variant="ghost" size="sm">
@@ -156,9 +156,9 @@ export default function ItemDetailPage({ params }: { params: Promise<{ id: strin
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-3xl font-bold text-gray-900">
+                <p className="text-3xl font-bold text-charcoal">
                   {item.quantity}
-                  <span className="ml-1 text-base font-normal text-gray-500">{item.unit}</span>
+                  <span className="ml-1 text-base font-normal text-pewter">{item.unit}</span>
                 </p>
                 {isLowStock && (
                   <Badge variant="warning" className="mt-1">
@@ -168,41 +168,41 @@ export default function ItemDetailPage({ params }: { params: Promise<{ id: strin
               </div>
               {item.unitCost != null && (
                 <div className="text-right">
-                  <p className="text-sm text-gray-500">{t('unitCost')}</p>
-                  <p className="text-lg font-semibold text-gray-900">{formatCurrency(item.unitCost)}</p>
+                  <p className="text-sm text-pewter">{t('unitCost')}</p>
+                  <p className="text-lg font-semibold text-charcoal">{formatCurrency(item.unitCost)}</p>
                 </div>
               )}
             </div>
 
-            <div className="space-y-1.5 border-t border-gray-100 pt-3 text-sm text-gray-600">
+            <div className="space-y-1.5 border-t border-mist pt-3 text-sm text-pewter">
               <div className="flex items-center gap-2">
-                <Package size={14} className="text-gray-400" />
+                <Package size={14} className="text-pewter/70" />
                 <span className="font-medium">{t('skuLabel')}</span>
                 <span className="font-mono">{item.sku}</span>
               </div>
               {item.barcode && (
                 <div className="flex items-center gap-2">
-                  <Package size={14} className="text-gray-400" />
+                  <Package size={14} className="text-pewter/70" />
                   <span className="font-medium">{t('barcodeLabel')}</span>
                   <span className="font-mono">{item.barcode}</span>
                 </div>
               )}
               {item.category && (
                 <div className="flex items-center gap-2">
-                  <Tag size={14} className="text-gray-400" />
+                  <Tag size={14} className="text-pewter/70" />
                   <span className="font-medium">{t('categoryLabel')}</span>
                   <span>{item.category.name}</span>
                 </div>
               )}
               {item.location && (
                 <div className="flex items-center gap-2">
-                  <MapPin size={14} className="text-gray-400" />
+                  <MapPin size={14} className="text-pewter/70" />
                   <span className="font-medium">{t('locationLabel')}</span>
                   <span>{item.location.name}</span>
                 </div>
               )}
               {item.description && (
-                <p className="pt-1 text-gray-500">{item.description}</p>
+                <p className="pt-1 text-pewter">{item.description}</p>
               )}
             </div>
           </div>
@@ -245,11 +245,11 @@ export default function ItemDetailPage({ params }: { params: Promise<{ id: strin
               {activeCheckouts.map((co) => (
                 <div
                   key={co.id}
-                  className="flex items-center justify-between rounded-lg border border-gray-100 bg-gray-50 px-3 py-2"
+                  className="flex items-center justify-between rounded-lg border border-mist bg-ash-card px-3 py-2"
                 >
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-gray-900">{co.user.name}</p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-sm font-medium text-charcoal">{co.user.name}</p>
+                    <p className="text-xs text-pewter">
                       {co.quantity} {item.unit} · {formatDate(co.checkedOutAt)}
                       {co.dueDate ? ` · ${t('dueShort', { date: formatDate(co.dueDate) })}` : ''}
                     </p>
@@ -277,9 +277,9 @@ export default function ItemDetailPage({ params }: { params: Promise<{ id: strin
         </CardHeader>
         <CardContent>
           {transactions.length === 0 ? (
-            <p className="py-4 text-center text-sm text-gray-400">{t('noTransactions')}</p>
+            <p className="py-4 text-center text-sm text-pewter/70">{t('noTransactions')}</p>
           ) : (
-            <div className="divide-y divide-gray-100">
+            <div className="divide-y divide-mist">
               {transactions.map((tx) => (
                 <ActivityItem
                   key={tx.id}

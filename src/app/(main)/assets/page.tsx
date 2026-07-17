@@ -88,7 +88,7 @@ export default function AssetsPage() {
   return (
     <div className="mx-auto max-w-2xl space-y-4 px-4 py-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
+        <h1 className="text-2xl font-bold text-charcoal">{t('title')}</h1>
         <Link href="/assets/new">
           <Button size="sm">
             <Plus size={16} className="mr-1" />
@@ -99,7 +99,7 @@ export default function AssetsPage() {
 
       <div className="space-y-2">
         <div className="relative">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-pewter/70" />
           <Input
             id="asset-search"
             placeholder={t('searchPlaceholder')}
@@ -152,16 +152,16 @@ export default function AssetsPage() {
             <Link
               key={asset.id}
               href={`/assets/${asset.id}`}
-              className="rounded-xl border border-gray-200 bg-white p-4 transition-colors duration-150 ease-swift hover:border-blue-200"
+              className="rounded-[20px] border border-mist bg-white p-4 transition-colors duration-150 ease-swift hover:border-teal"
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <p className="truncate font-medium text-gray-900">{asset.name}</p>
+                    <p className="truncate font-medium text-charcoal">{asset.name}</p>
                     <AssetStatusBadge status={asset.status} />
                   </div>
-                  <p className="mt-0.5 font-mono text-xs text-gray-500">{asset.assetNo}</p>
-                  <p className="mt-1 text-xs text-gray-400">
+                  <p className="mt-0.5 font-mono text-xs text-pewter">{asset.assetNo}</p>
+                  <p className="mt-1 text-xs text-pewter/70">
                     {asset.custodian
                       ? `${t('custodian')}: ${asset.custodian.name}`
                       : (asset.location?.name ?? '')}

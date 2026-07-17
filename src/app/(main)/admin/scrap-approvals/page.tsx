@@ -84,7 +84,7 @@ export default function ScrapApprovalsPage() {
 
   return (
     <div className="px-4 py-4">
-      <h1 className="mb-4 text-lg font-bold text-gray-900">{t('title')}</h1>
+      <h1 className="mb-4 text-lg font-bold text-charcoal">{t('title')}</h1>
 
       {loading ? (
         <Loading />
@@ -99,20 +99,20 @@ export default function ScrapApprovalsPage() {
           {requests.map((request) => (
             <div
               key={request.id}
-              className="rounded-xl border border-gray-200 bg-white p-4"
+              className="rounded-[20px] border border-mist bg-white p-4"
             >
               <Link
                 href={`/assets/${request.asset.id}`}
-                className="font-medium text-gray-900 hover:text-blue-600"
+                className="font-medium text-charcoal hover:text-teal"
               >
                 {request.asset.name}
               </Link>
-              <p className="mt-0.5 font-mono text-xs text-gray-500">{request.asset.assetNo}</p>
-              <p className="mt-2 text-sm text-gray-700">
-                <span className="text-gray-500">{t('reason')}: </span>
+              <p className="mt-0.5 font-mono text-xs text-pewter">{request.asset.assetNo}</p>
+              <p className="mt-2 text-sm text-charcoal">
+                <span className="text-pewter">{t('reason')}: </span>
                 {request.reason}
               </p>
-              <p className="mt-1 text-xs text-gray-400">
+              <p className="mt-1 text-xs text-pewter/70">
                 {t('requestedBy', { name: request.requester?.name ?? '—' })} ·{' '}
                 {formatDate(request.createdAt)}
               </p>
@@ -147,15 +147,15 @@ export default function ScrapApprovalsPage() {
       >
         <div className="space-y-4">
           {reviewing && (
-            <p className="text-sm text-gray-700">
+            <p className="text-sm text-charcoal">
               {reviewing.request.asset.name}{' '}
-              <span className="font-mono text-xs text-gray-500">
+              <span className="font-mono text-xs text-pewter">
                 {reviewing.request.asset.assetNo}
               </span>
             </p>
           )}
           <div className="space-y-1">
-            <label htmlFor="review-note" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="review-note" className="block text-sm font-medium text-charcoal">
               {t('reviewNoteLabel')}
             </label>
             <textarea
@@ -163,7 +163,7 @@ export default function ScrapApprovalsPage() {
               value={reviewNote}
               onChange={(e) => setReviewNote(e.target.value)}
               rows={3}
-              className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="block w-full rounded-full border border-mist px-3 py-2 text-sm placeholder:text-pewter/70 focus:border-teal focus:outline-none focus:ring-1 focus:ring-teal"
             />
           </div>
           <div className="flex gap-2 pt-2">

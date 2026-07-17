@@ -101,8 +101,8 @@ export function BarcodeScanner({ onScan }: BarcodeScannerProps) {
   if (error) {
     return (
       <div className="flex h-48 flex-col items-center justify-center gap-3 bg-white p-6 text-center">
-        <CameraOff size={32} className="text-gray-400" />
-        <p className="text-sm text-gray-600">{t(`cameraError.${error}`)}</p>
+        <CameraOff size={32} className="text-pewter/70" />
+        <p className="text-sm text-pewter">{t(`cameraError.${error}`)}</p>
         <Button variant="secondary" onClick={() => setRetryKey((k) => k + 1)}>
           {t('retryCamera')}
         </Button>
@@ -111,7 +111,7 @@ export function BarcodeScanner({ onScan }: BarcodeScannerProps) {
   }
 
   return (
-    <div className="overflow-hidden rounded-xl">
+    <div className="overflow-hidden rounded-[20px]">
       <div
         id="barcode-scanner-container"
         ref={containerRef}

@@ -97,8 +97,8 @@ export default function DashboardPage() {
   return (
     <div className="mx-auto max-w-2xl space-y-6 px-4 py-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
-        <p className="mt-1 text-sm text-gray-500">{t('subtitle')}</p>
+        <h1 className="text-2xl font-bold text-charcoal">{t('title')}</h1>
+        <p className="mt-1 text-sm text-pewter">{t('subtitle')}</p>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
@@ -163,9 +163,9 @@ export default function DashboardPage() {
         </CardHeader>
         <CardContent>
           {transactions.length === 0 ? (
-            <p className="py-6 text-center text-sm text-gray-400">{t('noActivity')}</p>
+            <p className="py-6 text-center text-sm text-pewter/70">{t('noActivity')}</p>
           ) : (
-            <div className="divide-y divide-gray-100">
+            <div className="divide-y divide-mist">
               {transactions.map((tx) => (
                 <ActivityItem
                   key={tx.id}

@@ -171,7 +171,7 @@ export default function AssetDetailPage({ params }: { params: Promise<{ id: stri
 
   if (loading) return <Loading />
   if (!asset) {
-    return <p className="py-10 text-center text-sm text-gray-500">{t('notFound')}</p>
+    return <p className="py-10 text-center text-sm text-pewter">{t('notFound')}</p>
   }
 
   const actionable = asset.status !== 'scrapped' && !asset.pendingScrapRequest
@@ -202,26 +202,26 @@ export default function AssetDetailPage({ params }: { params: Promise<{ id: stri
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <h1 className="truncate text-2xl font-bold text-gray-900">{asset.name}</h1>
+            <h1 className="truncate text-2xl font-bold text-charcoal">{asset.name}</h1>
             <AssetStatusBadge status={asset.status} />
           </div>
-          {asset.description && <p className="mt-1 text-sm text-gray-500">{asset.description}</p>}
+          {asset.description && <p className="mt-1 text-sm text-pewter">{asset.description}</p>}
         </div>
       </div>
 
       {asset.pendingScrapRequest && (
-        <div className="rounded-xl border border-yellow-200 bg-yellow-50 p-3 text-sm text-yellow-800">
+        <div className="rounded-[20px] border border-yellow-200 bg-yellow-50 p-3 text-sm text-yellow-800">
           {t('pendingScrapNotice')}
         </div>
       )}
 
       <Card>
         <CardContent>
-          <dl className="divide-y divide-gray-100">
+          <dl className="divide-y divide-mist">
             {infoRows.map(([label, value]) => (
               <div key={label} className="flex justify-between gap-4 py-2 text-sm">
-                <dt className="text-gray-500">{label}</dt>
-                <dd className="text-right font-medium text-gray-900">{value}</dd>
+                <dt className="text-pewter">{label}</dt>
+                <dd className="text-right font-medium text-charcoal">{value}</dd>
               </div>
             ))}
           </dl>
@@ -257,28 +257,28 @@ export default function AssetDetailPage({ params }: { params: Promise<{ id: stri
         </CardHeader>
         <CardContent>
           {asset.events.length === 0 ? (
-            <p className="py-6 text-center text-sm text-gray-400">{t('noEvents')}</p>
+            <p className="py-6 text-center text-sm text-pewter/70">{t('noEvents')}</p>
           ) : (
-            <div className="divide-y divide-gray-100">
+            <div className="divide-y divide-mist">
               {asset.events.map((event) => (
                 <div key={event.id} className="py-3 text-sm">
                   <div className="flex items-center justify-between gap-2">
-                    <p className="font-medium text-gray-900">{t(`events.${event.type}`)}</p>
-                    <p className="shrink-0 text-xs text-gray-400">{formatDate(event.createdAt)}</p>
+                    <p className="font-medium text-charcoal">{t(`events.${event.type}`)}</p>
+                    <p className="shrink-0 text-xs text-pewter/70">{formatDate(event.createdAt)}</p>
                   </div>
                   {event.type === 'TRANSFER' && (
-                    <p className="mt-0.5 text-xs text-gray-500">
+                    <p className="mt-0.5 text-xs text-pewter">
                       {event.fromCustodian?.name ?? '—'} → {event.toCustodian?.name ?? '—'}
                     </p>
                   )}
                   {event.type === 'STATUS_CHANGE' && event.fromStatus && event.toStatus && (
-                    <p className="mt-0.5 text-xs text-gray-500">
+                    <p className="mt-0.5 text-xs text-pewter">
                       {tStatus(event.fromStatus)} → {tStatus(event.toStatus)}
                     </p>
                   )}
-                  {event.note && <p className="mt-0.5 text-xs text-gray-500">{event.note}</p>}
+                  {event.note && <p className="mt-0.5 text-xs text-pewter">{event.note}</p>}
                   {event.performer && (
-                    <p className="mt-0.5 text-xs text-gray-400">{event.performer.name}</p>
+                    <p className="mt-0.5 text-xs text-pewter/70">{event.performer.name}</p>
                   )}
                 </div>
               ))}
@@ -377,7 +377,7 @@ function NoteTextarea({
 }) {
   return (
     <div className="space-y-1">
-      <label htmlFor={id} className="block text-sm font-medium text-gray-700">
+      <label htmlFor={id} className="block text-sm font-medium text-charcoal">
         {label}
       </label>
       <textarea
@@ -386,7 +386,7 @@ function NoteTextarea({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         rows={3}
-        className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+        className="block w-full rounded-full border border-mist px-3 py-2 text-sm placeholder:text-pewter/70 focus:border-teal focus:outline-none focus:ring-1 focus:ring-teal"
       />
     </div>
   )

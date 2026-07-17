@@ -72,7 +72,7 @@ export function StockModal({ open, onClose, itemId, itemName, type, onSuccess }:
 
   return (
     <Modal open={open} onClose={onClose} title={title}>
-      <p className="mb-4 text-sm text-gray-500">{itemName}</p>
+      <p className="mb-4 text-sm text-pewter">{itemName}</p>
       <form onSubmit={handleSubmit} className="space-y-4">
         <Input
           id="quantity"

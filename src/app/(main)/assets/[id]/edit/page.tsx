@@ -43,7 +43,7 @@ export default function EditAssetPage({ params }: { params: Promise<{ id: string
   }, [id])
 
   if (notFound) {
-    return <p className="py-10 text-center text-sm text-gray-500">{t('saveFailed')}</p>
+    return <p className="py-10 text-center text-sm text-pewter">{t('saveFailed')}</p>
   }
 
   if (!initialData) {
@@ -52,7 +52,7 @@ export default function EditAssetPage({ params }: { params: Promise<{ id: string
 
   return (
     <div className="mx-auto max-w-2xl space-y-4 px-4 py-6">
-      <h1 className="text-2xl font-bold text-gray-900">{t('editTitle')}</h1>
+      <h1 className="text-2xl font-bold text-charcoal">{t('editTitle')}</h1>
       <AssetForm assetId={parseInt(id)} initialData={initialData} />
     </div>
   )

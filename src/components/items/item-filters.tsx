@@ -46,14 +46,14 @@ export function ItemFilters({
       <div className="relative">
         <Search
           size={16}
-          className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-pewter/70"
         />
         <input
           type="text"
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder={t('searchPlaceholder')}
-          className="block w-full rounded-lg border border-gray-300 py-2 pl-9 pr-3 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="block w-full rounded-full border border-mist py-2 pl-9 pr-3 text-sm placeholder:text-pewter/70 focus:border-teal focus:outline-none focus:ring-1 focus:ring-teal"
         />
       </div>
 
@@ -61,7 +61,7 @@ export function ItemFilters({
         <select
           value={categoryId}
           onChange={(e) => onCategoryChange(e.target.value)}
-          className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="rounded-full border border-mist px-3 py-1.5 text-xs focus:border-teal focus:outline-none focus:ring-1 focus:ring-teal"
         >
           <option value="">{t('allCategories')}</option>
           {categories.map((c) => (
@@ -74,7 +74,7 @@ export function ItemFilters({
         <select
           value={locationId}
           onChange={(e) => onLocationChange(e.target.value)}
-          className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="rounded-full border border-mist px-3 py-1.5 text-xs focus:border-teal focus:outline-none focus:ring-1 focus:ring-teal"
         >
           <option value="">{t('allLocations')}</option>
           {locations.map((l) => (
@@ -87,10 +87,10 @@ export function ItemFilters({
         <button
           onClick={() => onLowStockChange(!lowStockOnly)}
           className={cn(
-            'flex-shrink-0 rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors',
+            'flex-shrink-0 rounded-full border px-4 py-2 text-sm font-medium transition-colors',
             lowStockOnly
-              ? 'border-yellow-400 bg-yellow-100 text-yellow-800'
-              : 'border-gray-300 bg-white text-gray-600 hover:bg-gray-50'
+              ? 'border-teal-ink bg-teal-ink text-white'
+              : 'border-mist bg-white text-pewter hover:text-charcoal'
           )}
         >
           {t('lowStockFilter')}

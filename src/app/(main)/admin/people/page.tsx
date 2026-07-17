@@ -140,7 +140,7 @@ export default function PeoplePage() {
   return (
     <div className="px-4 py-4">
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-lg font-bold text-gray-900">{t('title')}</h1>
+        <h1 className="text-lg font-bold text-charcoal">{t('title')}</h1>
         <Button size="sm" onClick={openAdd}>
           <Plus size={16} className="mr-1" />
           {t('add')}
@@ -163,28 +163,28 @@ export default function PeoplePage() {
       ) : (
         <div className="flex flex-col gap-3">
           {peopleList.map((person) => (
-            <div key={person.id} className="rounded-xl border border-gray-200 bg-white p-4">
+            <div key={person.id} className="rounded-[20px] border border-mist bg-white p-4">
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <p className="font-medium text-gray-900">{person.name}</p>
+                    <p className="font-medium text-charcoal">{person.name}</p>
                     {!person.isActive && <Badge variant="default">{t('inactive')}</Badge>}
                   </div>
                   {person.department && (
-                    <p className="mt-0.5 text-sm text-gray-500">{person.department}</p>
+                    <p className="mt-0.5 text-sm text-pewter">{person.department}</p>
                   )}
-                  {person.email && <p className="mt-0.5 text-xs text-gray-400">{person.email}</p>}
+                  {person.email && <p className="mt-0.5 text-xs text-pewter/70">{person.email}</p>}
                 </div>
                 <div className="flex shrink-0 gap-1">
                   <button
                     onClick={() => openEdit(person)}
-                    className="rounded-lg p-2 text-gray-400 hover:bg-blue-50 hover:text-blue-600"
+                    className="rounded-full p-2 text-pewter/70 hover:bg-aqua-card hover:text-teal"
                   >
                     <Pencil size={16} />
                   </button>
                   <button
                     onClick={() => handleDelete(person)}
-                    className="rounded-lg p-2 text-gray-400 hover:bg-red-50 hover:text-red-600"
+                    className="rounded-full p-2 text-pewter/70 hover:bg-red-50 hover:text-red-600"
                   >
                     <Trash2 size={16} />
                   </button>
@@ -220,12 +220,12 @@ export default function PeoplePage() {
             onChange={(e) => setForm({ ...form, email: e.target.value })}
           />
           {editingPerson && (
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+            <label className="flex items-center gap-2 text-sm font-medium text-charcoal">
               <input
                 type="checkbox"
                 checked={form.isActive}
                 onChange={(e) => setForm({ ...form, isActive: e.target.checked })}
-                className="h-4 w-4 rounded border-gray-300"
+                className="h-4 w-4 rounded border-mist"
               />
               {t('activeLabel')}
             </label>

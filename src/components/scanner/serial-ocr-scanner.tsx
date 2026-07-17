@@ -151,8 +151,8 @@ function SerialOcrCameraSession({ onDetected, onRetry }: SerialOcrCameraSessionP
   if (error) {
     return (
       <div className="flex h-48 flex-col items-center justify-center gap-3 bg-white p-6 text-center">
-        <CameraOff size={32} className="text-gray-400" />
-        <p className="text-sm text-gray-600">{t(`cameraError.${error}`)}</p>
+        <CameraOff size={32} className="text-pewter/70" />
+        <p className="text-sm text-pewter">{t(`cameraError.${error}`)}</p>
         <Button variant="secondary" onClick={onRetry}>
           {t('retryCamera')}
         </Button>
@@ -162,14 +162,14 @@ function SerialOcrCameraSession({ onDetected, onRetry }: SerialOcrCameraSessionP
 
   return (
     <div className="space-y-3">
-      <div className="relative overflow-hidden rounded-xl bg-black">
+      <div className="relative overflow-hidden rounded-[20px] bg-black">
         <video ref={videoRef} playsInline muted className="w-full" />
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
           {/* Must mirror the capture crop: 80% width, 5:1 aspect (see handleCapture).
               The hint is absolutely positioned off the box so it cannot shift the
               box away from the video center the crop is taken from. */}
-          <div className="relative aspect-[5/1] w-4/5 rounded-lg border-2 border-white/80 shadow-[0_0_0_9999px_rgba(0,0,0,0.4)]">
-            <p className="absolute inset-x-0 top-full mt-3 px-4 text-center text-sm font-medium text-white drop-shadow-md">
+          <div className="relative aspect-[5/1] w-4/5 rounded-lg border-2 border-white/80">
+            <p className="absolute inset-x-0 top-full mt-3 px-4 text-center text-sm font-medium text-white">
               {t('serialGuideHint')}
             </p>
           </div>
@@ -192,7 +192,7 @@ function SerialOcrCameraSession({ onDetected, onRetry }: SerialOcrCameraSessionP
             value={text}
             onChange={(e) => setText(e.target.value)}
           />
-          <p className="text-xs text-gray-500">{t('confidenceHint', { value: confidence })}</p>
+          <p className="text-xs text-pewter">{t('confidenceHint', { value: confidence })}</p>
           <div className="flex gap-2">
             <Button className="flex-1" onClick={() => onDetected(text)} disabled={!text}>
               {t('useSerial')}
@@ -205,8 +205,8 @@ function SerialOcrCameraSession({ onDetected, onRetry }: SerialOcrCameraSessionP
       )}
 
       {ocrState === 'empty' && (
-        <div className="space-y-2 rounded-xl border border-yellow-200 bg-yellow-50 p-3 text-center">
-          <p className="text-sm text-gray-700">{t('nothingReadable')}</p>
+        <div className="space-y-2 rounded-[20px] border border-yellow-200 bg-yellow-50 p-3 text-center">
+          <p className="text-sm text-charcoal">{t('nothingReadable')}</p>
           <Button variant="secondary" className="w-full" onClick={() => setOcrState('ready')}>
             {t('retake')}
           </Button>

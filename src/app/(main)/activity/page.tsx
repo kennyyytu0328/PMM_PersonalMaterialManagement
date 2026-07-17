@@ -50,27 +50,27 @@ function TransactionRow({ tx }: { tx: TransactionItem }) {
   const tTypes = useTranslations('activity.types')
 
   return (
-    <div className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4">
+    <div className="flex items-start gap-3 rounded-[20px] border border-mist bg-white p-4">
       <Badge variant={TYPE_VARIANT[tx.type]} className="mt-0.5 shrink-0">
         {tTypes(tx.type)}
       </Badge>
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-medium text-gray-900">
+        <p className="truncate text-sm font-medium text-charcoal">
           {tx.item?.name ?? t('unknownItem')}
         </p>
-        <p className="text-xs text-gray-400">{tx.item?.sku}</p>
-        {tx.note && <p className="mt-0.5 text-xs text-gray-500">{tx.note}</p>}
-        <p className="mt-1 text-xs text-gray-400">
+        <p className="text-xs text-pewter/70">{tx.item?.sku}</p>
+        {tx.note && <p className="mt-0.5 text-xs text-pewter">{tx.note}</p>}
+        <p className="mt-1 text-xs text-pewter/70">
           {t('by')} {tx.performer?.name ?? t('unknownPerformer')} · {formatDate(tx.createdAt)}
         </p>
       </div>
       <span
         className={
           tx.type === 'IN'
-            ? 'text-sm font-semibold text-green-600'
+            ? 'text-sm font-semibold text-teal'
             : tx.type === 'OUT'
               ? 'text-sm font-semibold text-red-600'
-              : 'text-sm font-semibold text-blue-600'
+              : 'text-sm font-semibold text-teal'
         }
       >
         {tx.type === 'IN' ? '+' : tx.type === 'OUT' ? '-' : '±'}
@@ -167,7 +167,7 @@ export default function ActivityPage() {
 
   return (
     <div className="px-4 py-4">
-      <h1 className="mb-3 text-lg font-bold text-gray-900">{t('title')}</h1>
+      <h1 className="mb-3 text-lg font-bold text-charcoal">{t('title')}</h1>
 
       <ContentTabs tabs={tabs} active={tab} onChange={handleTabChange} />
 

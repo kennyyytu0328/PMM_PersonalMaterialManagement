@@ -79,27 +79,27 @@ export default function ProfilePage() {
 
   return (
     <div className="px-4 py-4">
-      <h1 className="mb-4 text-lg font-bold text-gray-900">{t('title')}</h1>
+      <h1 className="mb-4 text-lg font-bold text-charcoal">{t('title')}</h1>
 
-      <div className="mb-6 rounded-xl border border-gray-200 bg-white p-4">
+      <div className="mb-6 rounded-[20px] border border-mist bg-white p-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-600">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-sky-card text-teal">
             <User size={24} />
           </div>
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <p className="font-medium text-gray-900">{user?.name}</p>
+              <p className="font-medium text-charcoal">{user?.name}</p>
               <Badge variant={ROLE_VARIANT[role]}>{tRoles(role as 'admin' | 'staff' | 'viewer')}</Badge>
             </div>
-            <p className="text-sm text-gray-500">{user?.email}</p>
+            <p className="text-sm text-pewter">{user?.email}</p>
           </div>
         </div>
       </div>
 
-      <div className="rounded-xl border border-gray-200 bg-white p-4">
+      <div className="rounded-[20px] border border-mist bg-white p-4">
         <div className="mb-4 flex items-center gap-2">
-          <KeyRound size={20} className="text-gray-600" />
-          <h2 className="text-base font-semibold text-gray-900">{t('changePasswordHeader')}</h2>
+          <KeyRound size={20} className="text-pewter" />
+          <h2 className="text-base font-semibold text-charcoal">{t('changePasswordHeader')}</h2>
         </div>
         <div className="space-y-4">
           <Input

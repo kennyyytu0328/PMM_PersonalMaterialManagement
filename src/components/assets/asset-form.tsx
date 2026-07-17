@@ -170,7 +170,7 @@ export function AssetForm({ assetId, initialData }: AssetFormProps) {
         placeholder={t('assetNoPlaceholder')}
       />
       <div className="space-y-1">
-        <label htmlFor="asset-description" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="asset-description" className="block text-sm font-medium text-charcoal">
           {t('descriptionLabel')}
         </label>
         <textarea
@@ -179,7 +179,7 @@ export function AssetForm({ assetId, initialData }: AssetFormProps) {
           onChange={(e) => handleChange('description', e.target.value)}
           placeholder={t('descriptionPlaceholder')}
           rows={3}
-          className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="block w-full rounded-full border border-mist px-3 py-2 text-sm placeholder:text-pewter/70 focus:border-teal focus:outline-none focus:ring-1 focus:ring-teal"
         />
       </div>
       <Select

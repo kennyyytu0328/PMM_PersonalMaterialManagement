@@ -154,7 +154,7 @@ export default function UsersPage() {
   return (
     <div className="px-4 py-4">
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-lg font-bold text-gray-900">{t('title')}</h1>
+        <h1 className="text-lg font-bold text-charcoal">{t('title')}</h1>
         <Button size="sm" onClick={openAdd}>
           <Plus size={16} className="mr-1" />
           {t('add')}
@@ -179,27 +179,27 @@ export default function UsersPage() {
           {users.map((user) => (
             <div
               key={user.id}
-              className="rounded-xl border border-gray-200 bg-white p-4"
+              className="rounded-[20px] border border-mist bg-white p-4"
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <p className="font-medium text-gray-900">{user.name}</p>
+                    <p className="font-medium text-charcoal">{user.name}</p>
                     <Badge variant={ROLE_VARIANT[user.role]}>{tRoles(user.role)}</Badge>
                   </div>
-                  <p className="mt-0.5 text-sm text-gray-500">{user.email}</p>
-                  <p className="mt-1 text-xs text-gray-400">{formatDate(user.createdAt)}</p>
+                  <p className="mt-0.5 text-sm text-pewter">{user.email}</p>
+                  <p className="mt-1 text-xs text-pewter/70">{formatDate(user.createdAt)}</p>
                 </div>
                 <div className="flex shrink-0 gap-1">
                   <button
                     onClick={() => openEdit(user)}
-                    className="rounded-lg p-2 text-gray-400 hover:bg-blue-50 hover:text-blue-600"
+                    className="rounded-full p-2 text-pewter/70 hover:bg-aqua-card hover:text-teal"
                   >
                     <Pencil size={16} />
                   </button>
                   <button
                     onClick={() => handleDelete(user)}
-                    className="rounded-lg p-2 text-gray-400 hover:bg-red-50 hover:text-red-600"
+                    className="rounded-full p-2 text-pewter/70 hover:bg-red-50 hover:text-red-600"
                   >
                     <Trash2 size={16} />
                   </button>
@@ -236,7 +236,7 @@ export default function UsersPage() {
             onChange={(e) => setForm({ ...form, password: e.target.value })}
           />
           <div className="space-y-1">
-            <label htmlFor="user-role" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="user-role" className="block text-sm font-medium text-charcoal">
               {t('roleLabel')}
             </label>
             <select
@@ -245,7 +245,7 @@ export default function UsersPage() {
               onChange={(e) =>
                 setForm({ ...form, role: e.target.value as FormState['role'] })
               }
-              className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="block w-full rounded-full border border-mist px-3 py-2 text-sm focus:border-teal focus:outline-none focus:ring-1 focus:ring-teal"
             >
               <option value="viewer">{tRoles('viewer')}</option>
               <option value="staff">{tRoles('staff')}</option>

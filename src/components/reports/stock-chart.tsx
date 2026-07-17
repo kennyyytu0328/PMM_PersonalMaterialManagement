@@ -47,7 +47,7 @@ export function StockChart({ data }: StockChartProps) {
 
   if (chartData.length === 0) {
     return (
-      <div className="flex h-48 items-center justify-center text-sm text-gray-400">
+      <div className="flex h-48 items-center justify-center text-sm text-pewter/70">
         {t('noMovementData')}
       </div>
     )

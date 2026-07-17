@@ -113,8 +113,8 @@ export default function ItemsPage() {
     <div className="mx-auto max-w-2xl space-y-4 px-4 py-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
-          <p className="mt-0.5 text-sm text-gray-500">{t('totalCount', { count: total })}</p>
+          <h1 className="text-2xl font-bold text-charcoal">{t('title')}</h1>
+          <p className="mt-0.5 text-sm text-pewter">{t('totalCount', { count: total })}</p>
         </div>
         <Link href="/items/new">
           <Button size="sm">

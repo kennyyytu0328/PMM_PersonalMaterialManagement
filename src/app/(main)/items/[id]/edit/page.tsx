@@ -69,11 +69,11 @@ export default function EditItemPage({ params }: { params: Promise<{ id: string 
     <div className="mx-auto max-w-2xl space-y-4 px-4 py-6">
       <div className="flex items-center gap-3">
         <Link href={`/items/${id}`}>
-          <button className="rounded-full p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600">
+          <button className="rounded-full p-1.5 text-pewter/70 hover:bg-ash-card hover:text-pewter">
             <ArrowLeft size={20} />
           </button>
         </Link>
-        <h1 className="text-xl font-bold text-gray-900">{t('editItemTitle')}</h1>
+        <h1 className="text-xl font-bold text-charcoal">{t('editItemTitle')}</h1>
       </div>
 
       <ItemForm itemId={item.id} initialData={initialData} />

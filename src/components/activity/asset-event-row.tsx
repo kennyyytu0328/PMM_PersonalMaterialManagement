@@ -52,19 +52,19 @@ export function AssetEventRow({ event }: { event: AssetEventEntry }) {
   return (
     <Link
       href={`/assets/${event.assetId}`}
-      className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4"
+      className="flex items-start gap-3 rounded-[20px] border border-mist bg-white p-4"
     >
-      <Badge variant={EVENT_VARIANT[event.type]} className="mt-0.5 shrink-0">
+      <Badge variant={EVENT_VARIANT[event.type]} className="mt-0.5 shrink-0 bg-sky-card text-navy">
         {tEvents(event.type)}
       </Badge>
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-medium text-gray-900">
+        <p className="truncate text-sm font-medium text-charcoal">
           {event.asset?.name ?? t('unknownAsset')}
         </p>
-        <p className="text-xs text-gray-400">{event.asset?.assetNo}</p>
-        {context && <p className="mt-0.5 text-xs text-gray-600">{context}</p>}
-        {event.note && <p className="mt-0.5 text-xs text-gray-500">{event.note}</p>}
-        <p className="mt-1 text-xs text-gray-400">
+        <p className="text-xs text-pewter/70">{event.asset?.assetNo}</p>
+        {context && <p className="mt-0.5 text-xs text-pewter">{context}</p>}
+        {event.note && <p className="mt-0.5 text-xs text-pewter">{event.note}</p>}
+        <p className="mt-1 text-xs text-pewter/70">
           {t('by')} {event.performer?.name ?? t('unknownPerformer')} · {formatDate(event.createdAt)}
         </p>
       </div>

@@ -115,7 +115,7 @@ export default function ReportsPage() {
 
   return (
     <div className="px-4 py-4 space-y-6">
-      <h1 className="text-lg font-bold text-gray-900">{t('title')}</h1>
+      <h1 className="text-lg font-bold text-charcoal">{t('title')}</h1>
 
       <ContentTabs tabs={tabs} active={tab} onChange={setTab} />
 
@@ -158,17 +158,17 @@ export default function ReportsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="divide-y divide-gray-100">
+            <div className="divide-y divide-mist">
               {lowStock.map((item) => (
                 <div key={item.id} className="flex items-center justify-between py-2.5">
                   <div>
-                    <p className="text-sm font-medium text-gray-900">{item.name}</p>
-                    <p className="text-xs text-gray-400">{item.sku}</p>
+                    <p className="text-sm font-medium text-charcoal">{item.name}</p>
+                    <p className="text-xs text-pewter/70">{item.sku}</p>
                   </div>
                   <div className="text-right">
                     <Badge variant="danger">{t('leftBadge', { count: item.quantity })}</Badge>
                     {item.minQuantity !== null && (
-                      <p className="mt-0.5 text-xs text-gray-400">
+                      <p className="mt-0.5 text-xs text-pewter/70">
                         {t('minLabel', { min: item.minQuantity })}
                       </p>
                     )}
@@ -186,15 +186,15 @@ export default function ReportsPage() {
             <CardTitle>{t('byCategory')}</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="divide-y divide-gray-100">
+            <div className="divide-y divide-mist">
               {categories.map((cat) => (
                 <div key={cat.categoryName} className="flex items-center justify-between py-2.5">
-                  <p className="text-sm font-medium text-gray-900">
+                  <p className="text-sm font-medium text-charcoal">
                     {cat.categoryName ?? t('uncategorized')}
                   </p>
                   <div className="text-right">
-                    <p className="text-sm text-gray-700">{t('itemsCount', { count: cat.count })}</p>
-                    <p className="text-xs text-gray-400">
+                    <p className="text-sm text-charcoal">{t('itemsCount', { count: cat.count })}</p>
+                    <p className="text-xs text-pewter/70">
                       {t('totalQty', { qty: Number(cat.totalQuantity) || 0 })}
                     </p>
                   </div>
