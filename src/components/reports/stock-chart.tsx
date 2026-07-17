@@ -56,16 +56,16 @@ export function StockChart({ data }: StockChartProps) {
   return (
     <ResponsiveContainer width="100%" height={280}>
       <BarChart data={chartData} margin={{ top: 4, right: 8, left: -16, bottom: 0 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+        <CartesianGrid strokeDasharray="3 3" stroke="#c8d6cf" />
         <XAxis dataKey="date" tick={{ fontSize: 11 }} tickLine={false} />
         <YAxis tick={{ fontSize: 11 }} tickLine={false} axisLine={false} />
         <Tooltip
-          contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid #e5e7eb' }}
+          contentStyle={{ fontSize: 12, borderRadius: 12, border: '1px solid #c8d6cf' }}
         />
         <Legend wrapperStyle={{ fontSize: 12 }} />
-        <Bar dataKey="IN" name={tLegend('IN')} fill="#22c55e" radius={[4, 4, 0, 0]} />
-        <Bar dataKey="OUT" name={tLegend('OUT')} fill="#ef4444" radius={[4, 4, 0, 0]} />
-        <Bar dataKey="ADJUST" name={tLegend('ADJUST')} fill="#3b82f6" radius={[4, 4, 0, 0]} />
+        <Bar dataKey="IN" name={tLegend('IN')} fill="#14867f" radius={[4, 4, 0, 0]} />
+        <Bar dataKey="OUT" name={tLegend('OUT')} fill="#1b3f74" radius={[4, 4, 0, 0]} />
+        <Bar dataKey="ADJUST" name={tLegend('ADJUST')} fill="#bfdeea" radius={[4, 4, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   )

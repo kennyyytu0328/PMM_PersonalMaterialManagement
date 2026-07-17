@@ -106,25 +106,25 @@ export default function DashboardPage() {
           label={t('stats.totalItems')}
           value={summary?.totalItems ?? 0}
           icon={<Package size={20} />}
-          color="blue"
+          color="sky"
         />
         <DashboardStatCard
           label={t('stats.lowStock')}
           value={summary?.lowStockCount ?? 0}
           icon={<AlertTriangle size={20} />}
-          color="yellow"
+          color="sage"
         />
         <DashboardStatCard
           label={t('stats.checkedOut')}
           value={summary?.activeCheckouts ?? 0}
           icon={<ArrowUpRight size={20} />}
-          color="purple"
+          color="aqua"
         />
         <DashboardStatCard
           label={t('stats.inventoryValue')}
           value={formatCurrency(summary?.totalValue ?? 0)}
           icon={<DollarSign size={20} />}
-          color="green"
+          color="ash"
         />
       </div>
 
@@ -135,7 +135,7 @@ export default function DashboardPage() {
               label={t('stats.totalAssets')}
               value={assetSummary.totalAssets}
               icon={<Briefcase size={20} />}
-              color="blue"
+              color="sky"
             />
           </Link>
           <Link href="/assets?status=in_use">
@@ -143,7 +143,7 @@ export default function DashboardPage() {
               label={t('stats.assetsInUse')}
               value={assetSummary.assetsInUse}
               icon={<UserCheck size={20} />}
-              color="green"
+              color="sage"
             />
           </Link>
           <Link href="/admin/scrap-approvals">
@@ -151,7 +151,7 @@ export default function DashboardPage() {
               label={t('stats.pendingScrap')}
               value={assetSummary.pendingScrap}
               icon={<ClipboardCheck size={20} />}
-              color="yellow"
+              color="aqua"
             />
           </Link>
         </div>

@@ -59,13 +59,13 @@ export function AssetStats({ data }: { data: AssetSummaryData }) {
                 <div className="w-24 shrink-0">
                   <AssetStatusBadge status={row.status} />
                 </div>
-                <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-100">
+                <div className="h-2 flex-1 overflow-hidden rounded-full bg-ash-card">
                   <div
-                    className="h-full rounded-full bg-blue-500"
+                    className="h-full rounded-full bg-teal"
                     style={{ width: `${(row.count / maxCount) * 100}%` }}
                   />
                 </div>
-                <span className="w-8 text-right text-sm font-medium text-gray-700">
+                <span className="w-8 text-right text-sm font-medium text-charcoal">
                   {row.count}
                 </span>
               </div>

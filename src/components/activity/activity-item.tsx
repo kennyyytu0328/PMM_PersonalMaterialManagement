@@ -20,27 +20,27 @@ const typeConfig: Record<
 > = {
   IN: {
     icon: <ArrowDown size={16} />,
-    color: 'text-green-600 bg-green-100',
+    color: 'text-teal bg-aqua-card',
     prefix: '+',
   },
   OUT: {
     icon: <ArrowUp size={16} />,
-    color: 'text-red-600 bg-red-100',
+    color: 'text-amber-700 bg-peach-card',
     prefix: '-',
   },
   ADJUST: {
     icon: <Settings size={16} />,
-    color: 'text-yellow-600 bg-yellow-100',
+    color: 'text-[#4a91b3] bg-sky-card',
     prefix: '',
   },
   CHECKOUT: {
     icon: <ArrowUpRight size={16} />,
-    color: 'text-blue-600 bg-blue-100',
+    color: 'text-navy bg-sky-card',
     prefix: '-',
   },
   RETURN: {
     icon: <RotateCcw size={16} />,
-    color: 'text-purple-600 bg-purple-100',
+    color: 'text-teal-ink bg-sage-card',
     prefix: '+',
   },
 }
@@ -55,8 +55,8 @@ export function ActivityItem({ itemName, type, quantity, timestamp, performedBy 
         {config.icon}
       </div>
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-medium text-gray-900">{itemName}</p>
-        <p className="text-xs text-gray-500">
+        <p className="truncate text-sm font-medium text-charcoal">{itemName}</p>
+        <p className="text-xs text-pewter">
           {t(type)}
           {performedBy ? ` · ${performedBy}` : ''}
           {' · '}
@@ -66,8 +66,8 @@ export function ActivityItem({ itemName, type, quantity, timestamp, performedBy 
       <span
         className={cn(
           'text-sm font-semibold',
-          type === 'IN' || type === 'RETURN' ? 'text-green-600' : 'text-red-600',
-          type === 'ADJUST' && 'text-yellow-600'
+          type === 'IN' || type === 'RETURN' ? 'text-teal' : 'text-amber-700',
+          type === 'ADJUST' && 'text-pewter'
         )}
       >
         {config.prefix}{quantity}
