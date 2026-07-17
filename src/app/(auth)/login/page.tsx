@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
@@ -37,14 +38,22 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="w-full max-w-sm">
+    <div className="w-full max-w-sm rounded-[20px] border border-mist bg-white p-6">
       <div className="mb-8 text-center">
-        <h1 className="text-2xl font-bold text-gray-900">Stockpile</h1>
-        <p className="mt-1 text-sm text-gray-500">{t('subtitle')}</p>
+        <Image
+          src="/gogo_fresh_mark.png"
+          alt="Go Go Fresh"
+          width={200}
+          height={132}
+          priority
+          className="mx-auto h-20 w-auto"
+        />
+        <h1 className="sr-only">Go Go Fresh</h1>
+        <p className="mt-3 text-sm text-pewter">{t('subtitle')}</p>
       </div>
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
-          <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">{error}</div>
+          <div className="rounded-[20px] bg-red-50 p-3 text-sm text-red-600">{error}</div>
         )}
         <Input
           id="email"
